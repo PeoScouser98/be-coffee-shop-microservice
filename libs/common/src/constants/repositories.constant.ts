@@ -1,4 +1,4 @@
-enum Respositories {
+export enum Respositories {
 	USER = 'USER_REPOSITORY',
 	USER_TOKEN = 'USER_TOKEN_REPOSITORY',
 	PRODUCT = 'BASE_PRODUCT_REPOSITORY',
@@ -13,5 +13,3 @@ enum Respositories {
 	USER_CART = 'USER_CART',
 	ORDER = 'ORDER'
 }
-
-export default Respositories

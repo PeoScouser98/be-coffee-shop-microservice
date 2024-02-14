@@ -22,7 +22,7 @@ import { ProductLineDTO, ProductLineValidator } from './dto/product-line.dto'
 import { ProductLineService } from './product-line.service'
 import { LocalizationService, JwtGuard } from '@app/common'
 import { ZodValidationPipe } from '@app/common'
-import UserRoles from 'apps/user/src/constants/user.constant'
+import UserRoles from 'apps/auth/src/constants/user.constant'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import { Roles } from '@app/common/decorators/roles.decorator'
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import mongoose, { Model, QueryOptions } from 'mongoose'
-import { UserToken, UserTokenDocument } from './schemas/user-token.schema'
+import { UserToken, UserTokenDocument } from '../schemas/user-token.schema'
 
-import { IUserTokenRepository } from './interfaces/user-token.repository.interface'
+import { IUserTokenRepository } from '../interfaces/user-token.repository.interface'
 import { BaseAbstractRepository } from '@app/common/base/base.abstract.repository'
 
 @Injectable()

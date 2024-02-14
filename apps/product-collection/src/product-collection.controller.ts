@@ -21,7 +21,7 @@ import { ProductCollectionDTO } from './dto/product-collection.dto'
 import { ProductCollectionService } from './product-collection.service'
 import { LocalizationService, JwtGuard } from '@app/common'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
-import UserRoles from 'apps/user/src/constants/user.constant'
+import UserRoles from 'apps/auth/src/constants/user.constant'
 import { Roles } from '@app/common/decorators/roles.decorator'
 
 @Controller('product-collections')

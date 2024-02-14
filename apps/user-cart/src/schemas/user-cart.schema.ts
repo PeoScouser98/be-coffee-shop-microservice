@@ -1,4 +1,4 @@
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { defaultSchemaOptions } from '@app/common'
 import { UserCartStatus } from '../constants/user-cart.constant'

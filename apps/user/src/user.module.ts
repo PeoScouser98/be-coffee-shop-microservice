@@ -1,26 +1,47 @@
-import 'dotenv/config'
-
-import Collections from '@app/common/constants/collections.constant'
-import { Module, forwardRef } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { MongooseModule } from '@nestjs/mongoose'
-import { compareSync, genSaltSync, hashSync } from 'bcrypt'
-import { UserModelSchema, UserSchema } from './schemas/user.schema'
-import { UserController } from './user.controller'
-import { UserRepository } from './user.repository'
-import { UserService } from './user.service'
-import Respositories from '@app/common/constants/repositories.constant'
-import { DatabaseModule } from '@app/common/database/database.module'
-import { LocalizationModule } from '@app/common'
-import { AuthModule } from 'apps/auth/src/auth.module'
-import { UserTokenModule } from 'apps/user-token/src/user-token.module'
 import configuration from '@app/common/configs'
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { JwtModule, JwtService } from '@nestjs/jwt'
+import { AuthController } from './controllers/auth.controller'
+import { AuthService } from './services/auth.service'
+import { LocalStrategy } from './strategies/local.strategy'
+import { Collections, LocalizationModule, Respositories } from '@app/common'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { UserController } from './controllers/user.controller'
+import { UserRepository } from './repositories/user.repository'
+import { UserTokenRepository } from './repositories/user-token.repository'
+import { UserService } from './services/user.service'
+import { UserTokenService } from './services/user-token.service'
+import { MongooseModule } from '@nestjs/mongoose'
+import { UserToken, UserTokenSchema } from './schemas/user-token.schema'
+import { UserModelSchema, UserSchema } from './schemas/user.schema'
+import { compareSync, genSaltSync, hashSync } from 'bcrypt'
 
 @Module({
 	imports: [
-		DatabaseModule,
-		forwardRef(() => LocalizationModule),
-		ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
+		ClientsModule.register([
+			{
+				name: 'AUTH_SERVICE',
+				transport: Transport.KAFKA,
+				options: {
+					client: {
+						clientId: 'auth',
+						brokers: ['localhost:9092']
+					},
+					consumer: {
+						groupId: 'auth-consumer'
+					}
+				}
+			}
+		]),
+		LocalizationModule,
+		MongooseModule.forFeature([
+			{
+				name: UserToken.name,
+				schema: UserTokenSchema,
+				collection: Collections.USER_TOKENS
+			}
+		]),
 		MongooseModule.forFeatureAsync([
 			{
 				imports: [ConfigModule],
@@ -49,16 +70,20 @@ import configuration from '@app/common/configs'
 				inject: [ConfigService]
 			}
 		]),
-		AuthModule,
-		UserTokenModule
+		ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
+		JwtModule.register({ global: true })
 	],
 	providers: [
 		ConfigService,
+		JwtService,
+		LocalStrategy,
+		AuthService,
 		UserService,
-
-		{ provide: Respositories.USER, useClass: UserRepository }
+		UserTokenService,
+		{ provide: Respositories.USER, useClass: UserRepository },
+		{ provide: Respositories.USER_TOKEN, useClass: UserTokenRepository }
 	],
-	controllers: [UserController],
-	exports: [UserService, { provide: Respositories.USER, useClass: UserRepository }]
+	controllers: [AuthController, UserController],
+	exports: [AuthService]
 })
 export class UserModule {}

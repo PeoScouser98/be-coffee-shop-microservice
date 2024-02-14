@@ -12,7 +12,7 @@ import {
 	UseFilters,
 	UseGuards
 } from '@nestjs/common'
-import UserRoles from 'apps/user/src/constants/user.constant'
+import UserRoles from 'apps/auth/src/constants/user.constant'
 import { Response } from 'express'
 
 @Controller('user-cart')

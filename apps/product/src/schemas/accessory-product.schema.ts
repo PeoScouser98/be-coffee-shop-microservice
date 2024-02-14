@@ -1,5 +1,5 @@
 import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { ProductMaterials } from '../constants/product.constant'

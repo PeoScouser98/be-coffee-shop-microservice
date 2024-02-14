@@ -1,4 +1,4 @@
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 

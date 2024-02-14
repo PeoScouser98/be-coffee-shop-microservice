@@ -1,4 +1,4 @@
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
 import { IInventory } from '../interfaces/inventory.interface'

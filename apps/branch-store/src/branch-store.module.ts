@@ -4,9 +4,9 @@ import { BranchStoreController } from './branch-store.controller'
 import { MongooseModule } from '@nestjs/mongoose'
 import { BranchStoreModelSchema, BranchStoreSchema } from './schemas/brach-store.schema'
 import * as mongooseSlugGenerator from 'mongoose-slug-generator'
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { BranchStoreRepository } from './branch-store.repository'
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 
 @Module({
 	imports: [

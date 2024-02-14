@@ -1,4 +1,4 @@
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import * as _ from 'lodash'
@@ -15,7 +15,7 @@ import { AccessoryProduct, AccessoryProductSchema } from './schemas/accessory-pr
 import { ProductModelSchema, ProductSchema } from './schemas/product.schema'
 import { SneakerProductModelSchema, SneakerProductSchema } from './schemas/sneaker-product.schema'
 import { TopHalfProductModelSchema, TopHalfProductSchema } from './schemas/top-half-product.schema'
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { DatabaseModule, LocalizationModule } from '@app/common'
 @Module({
 	imports: [

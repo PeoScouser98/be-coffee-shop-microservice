@@ -1,12 +1,11 @@
-import Respositories from '@app/common/constants/repositories.constant'
-import { ServiceResult } from '@app/common'
+import { ServiceResult, Respositories } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { UserTokenRepository } from 'apps/user-token/src/user-token.repository'
-import { IUser } from 'apps/user/src/interfaces/user.interface'
-import { UserDocument } from 'apps/user/src/schemas/user.schema'
-import { UserRepository } from 'apps/user/src/user.repository'
+import { UserTokenRepository } from 'apps/auth/src/repositories/user-token.repository'
+import { IUser } from 'apps/auth/src/interfaces/user.interface'
+import { UserDocument } from 'apps/auth/src/schemas/user.schema'
+import { UserRepository } from 'apps/auth/src/repositories/user.repository'
 import { Algorithm, JwtPayload } from 'jsonwebtoken'
 
 @Injectable()

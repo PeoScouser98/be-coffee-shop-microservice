@@ -1,5 +1,5 @@
-import Collections from '@app/common/constants/collections.constant'
-import Respositories from '@app/common/constants/repositories.constant'
+import {Collections} from '@app/common'
+import { Respositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import * as mongoosePaginate from 'mongoose-paginate-v2'

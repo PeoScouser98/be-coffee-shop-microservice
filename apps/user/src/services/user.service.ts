@@ -1,14 +1,14 @@
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as crypto from 'node:crypto'
-import { UserDTO } from './dto/user.dto'
-import { UserDocument } from './schemas/user.schema'
-import { UserRepository } from './user.repository'
+import { UserDTO } from '../dto/user.dto'
+import { UserDocument } from '../schemas/user.schema'
+import { UserRepository } from '../repositories/user.repository'
 import { LocalizationService } from '@app/common'
-import { UserTokenService } from 'apps/user-token/src/user-token.service'
-import { AuthService } from 'apps/auth/src/auth.service'
+import { UserTokenService } from 'apps/auth/src/services/user-token.service'
+import { AuthService } from 'apps/auth/src/services/auth.service'
 
 @Injectable()
 export class UserService {

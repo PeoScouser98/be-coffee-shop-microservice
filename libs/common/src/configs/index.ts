@@ -43,6 +43,10 @@ export default () => {
 			user: '',
 			password: ''
 		},
+		kafka: {
+			brokers: ['localhost:9092'],
+			services: {}
+		},
 		i18n: {
 			fallbackLanguage: 'vi'
 		}

@@ -1,4 +1,4 @@
-import { IUser } from 'apps/user/src/interfaces/user.interface'
+import { IUser } from 'apps/auth/src/interfaces/user.interface'
 import { Types } from 'mongoose'
 
 export declare interface IUserToken {

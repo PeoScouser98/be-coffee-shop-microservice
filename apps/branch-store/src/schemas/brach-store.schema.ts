@@ -1,4 +1,4 @@
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { BranchStoreTypeEnum, Cities } from '../constants/branch-store.constant'

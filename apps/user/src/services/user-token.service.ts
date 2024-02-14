@@ -1,11 +1,9 @@
-import Respositories from '@app/common/constants/repositories.constant'
-import { ServiceResult } from '@app/common'
+import { LocalizationService, Respositories, ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { isValidObjectId } from 'mongoose'
-import { UserTokenDTO } from './dto/user-token.dto'
-import { UserTokenDocument } from './schemas/user-token.schema'
-import { UserTokenRepository } from './user-token.repository'
-import { LocalizationService } from '@app/common'
+import { UserTokenDTO } from '../dto/user-token.dto'
+import { UserTokenDocument } from '../schemas/user-token.schema'
+import { UserTokenRepository } from '../repositories/user-token.repository'
 
 @Injectable()
 export class UserTokenService {

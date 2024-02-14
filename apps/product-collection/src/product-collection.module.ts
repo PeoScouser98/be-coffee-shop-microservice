@@ -1,4 +1,4 @@
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ProductCollectionService } from './product-collection.service'
@@ -10,7 +10,7 @@ import {
 } from './schemas/product-collection.schema'
 import * as _ from 'lodash'
 import * as mongooseSlugGenerator from 'mongoose-slug-generator'
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { DatabaseModule, LocalizationModule } from '@app/common'
 
 @Module({

@@ -1,4 +1,4 @@
-import Respositories from '@app/common/constants/repositories.constant'
+import { Respositories } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InventoryDTO } from './dto/inventory.dto'
 import { IInventory } from './interfaces/inventory.interface'

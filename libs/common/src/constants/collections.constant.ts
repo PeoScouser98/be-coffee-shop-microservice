@@ -1,4 +1,4 @@
-enum Collections {
+export enum Collections {
 	API_KEYS = 'api_keys',
 	USERS = 'users',
 	PRODUCTS = 'products',
@@ -14,5 +14,3 @@ enum Collections {
 	USER_CART = 'user_carts',
 	ORDERS = 'orders'
 }
-
-export default Collections

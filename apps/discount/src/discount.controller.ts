@@ -17,7 +17,7 @@ import {
 	UseGuards,
 	UsePipes
 } from '@nestjs/common'
-import UserRoles from 'apps/user/src/constants/user.constant'
+import UserRoles from 'apps/auth/src/constants/user.constant'
 import { Response } from 'express'
 import { DiscountService } from './discount.service'
 import { DiscountDTO, DiscountValidator } from './dto/discount.dto'

@@ -17,7 +17,7 @@ import {
 	UseGuards,
 	UsePipes
 } from '@nestjs/common'
-import UserRoles from 'apps/user/src/constants/user.constant'
+import UserRoles from 'apps/auth/src/constants/user.constant'
 import { Response } from 'express'
 import { BranchStoreService } from './branch-store.service'
 import { CreateBranchStoreDTO, CreateBranchStoreValidator } from './dto/branch-store.dto'

@@ -1,4 +1,4 @@
-import Collections from '@app/common/constants/collections.constant'
+import { Collections } from '@app/common'
 import { Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { IOrder } from '../interfaces/user-order.interface'

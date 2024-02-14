@@ -1,5 +1,5 @@
-import Collections from '@app/common/constants/collections.constant'
-import Respositories from '@app/common/constants/repositories.constant'
+import { Collections } from '@app/common'
+import { Respositories } from '@app/common'
 import { ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import * as _ from 'lodash'
