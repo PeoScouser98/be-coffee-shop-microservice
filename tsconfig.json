@@ -1,13 +1,14 @@
 {
 	"sourceRoot": "src",
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "CommonJS",
+		"allowJs": true,
 		"declaration": true,
 		"removeComments": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"target": "es2017",
+		"target": "ESNext",
 		"sourceMap": true,
 		"outDir": "./dist",
 		"incremental": true,
@@ -19,7 +20,9 @@
 		"noFallthroughCasesInSwitch": false,
 		"baseUrl": "./",
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["src/*"],
+			"@app/common": ["libs/common/src"],
+			"@app/common/*": ["libs/common/src/*"]
 		},
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	}

@@ -1,0 +1,51 @@
+{
+	"product": {
+		"creating": "Thêm sản phẩm thất bại",
+		"updating": "Cập nhật sản phẩm thất bại",
+		"deleting": "Không tìm thấy sản phẩm để xóa",
+		"publishing": "Đẩy sản phẩm lên gian hàng thất bại",
+		"invalid_type": "Loại sản phẩm không hợp lệ",
+		"duplicated_sku": "Mã sản phẩm đã tồn tại"
+	},
+	"product_line": {
+		"creating": "Lỗi thêm dòng sản phẩm",
+		"updating": "Lỗi cập nhật dòng sản phẩm",
+		"deleting": "Lỗi xóa dòng sản phẩm"
+	},
+	"product_collection": {
+		"creating": "Lỗi thêm bộ sưu tập sản phẩm",
+		"updating": "Lỗi cập nhật bộ sưu tập sản phẩm",
+		"deleting": "Lỗi xóa bộ sưu tập sản phẩm"
+	},
+	"branch_store": {
+		"creating": "Lỗi thêm cửa hàng",
+		"updating": "Lỗi cập nhật cửa hàng",
+		"deleting": "Lỗi xóa cửa hàng"
+	},
+	"user": {
+		"registering": "Đăng ký thất bại",
+		"conflict": "Người dùng đã tồn tại",
+		"not_found": "Không tìm thấy người dùng"
+	},
+	"user_token": {
+		"not_found": "Không tìm thấy token người dùng",
+		"unsable_token": "Token không còn khả dụng"
+	},
+	"auth": {
+		"refresing_token": "Làm mới phiên đăng nhập thất bại",
+		"incorrect_password": "Mật khẩu không chính xác"
+	},
+	"discount": {
+		"creating": "Tạo mã giảm giá thất bại",
+		"updating": "Cập nhật mã giảm giá thất bại",
+		"deleting": "Xóa mã giảm giá thất bại",
+		"not_found": "Không tìm thấy mã giảm giá"
+	},
+	"inventory": {
+		"product_not_found": "Sản phẩm không tồn tại trong kho hàng"
+	},
+	"user_cart": {
+		"out_of_order": "Kho hàng không đủ số lượng yêu cầu",
+		"not_found": "Giỏ hàng không tồn tại"
+	}
+}
