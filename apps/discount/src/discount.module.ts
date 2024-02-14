@@ -1,4 +1,4 @@
-import {Collections} from '@app/common'
+import { Collections } from '@app/common'
 import { Respositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
