@@ -14,10 +14,14 @@ export * from './decorators/roles.decorator'
 export * from './decorators/user.decorator'
 export * from './pipes/zod-validation.pipe'
 // Constants
-export * from './constants/collections.constant'
-export * from './constants/repositories.constant'
+export { Collections } from './constants/collections.constant'
+export { Repositories } from './constants/repositories.constant'
 // Exceptions
 export * from './exceptions/all-exceptions-filter'
 // Helpers
 export * from './helpers/http.helper'
 export * from './helpers/log.helper'
+
+// RabbitMQ
+export * from './rmq/rmq.module'
+export * from './rmq/rmq.service'
