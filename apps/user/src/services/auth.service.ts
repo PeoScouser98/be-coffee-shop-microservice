@@ -1,4 +1,4 @@
-import { LocalizationModule, LocalizationService, ServiceResult } from '@app/common'
+import { LocalizationService, ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
