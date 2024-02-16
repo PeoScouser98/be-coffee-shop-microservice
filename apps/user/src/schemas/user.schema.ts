@@ -1,14 +1,16 @@
-import { Collections } from '@app/common'
+import { defaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
+import { USER_COLLECTION, UserRoles } from '../constants/user.constant'
 import { IUser } from '../interfaces/user.interface'
-import UserRoles from '../constants/user.constant'
-import { defaultSchemaOptions } from '@app/common'
 
-export type UserDocument = HydratedDocument<IUser>
+export type UserDocument = HydratedDocument<IUser> & {
+	encryptPassword: (password: string) => string
+	authenticate: (password: string) => boolean
+}
 
 @Schema({
-	collection: Collections.USERS,
+	collection: USER_COLLECTION,
 	...defaultSchemaOptions
 })
 export class UserModelSchema {
@@ -34,7 +36,7 @@ export class UserModelSchema {
 		required: true,
 		trim: true
 	})
-	displayName: string
+	display_name: string
 
 	@Prop({
 		type: String,

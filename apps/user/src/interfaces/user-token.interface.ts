@@ -1,7 +1,7 @@
-import { IUser } from 'apps/auth/src/interfaces/user.interface'
 import { Types } from 'mongoose'
+import { IUser } from './user.interface'
 
-export declare interface IUserToken {
+export interface IUserToken {
 	user: Types.ObjectId | Partial<IUser>
 	public_key: string
 	private_key: string

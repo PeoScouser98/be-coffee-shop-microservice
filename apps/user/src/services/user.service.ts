@@ -1,22 +1,18 @@
-import { Respositories } from '@app/common'
-import { ServiceResult } from '@app/common'
+import { LocalizationService, ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import * as crypto from 'node:crypto'
+import { USER_REPOSITORY } from '../constants/user.constant'
 import { UserDTO } from '../dto/user.dto'
-import { UserDocument } from '../schemas/user.schema'
 import { UserRepository } from '../repositories/user.repository'
-import { LocalizationService } from '@app/common'
-import { UserTokenService } from 'apps/auth/src/services/user-token.service'
-import { AuthService } from 'apps/auth/src/services/auth.service'
+import { UserDocument } from '../schemas/user.schema'
+import { AuthService } from './auth.service'
+import { UserTokenService } from './user-token.service'
 
 @Injectable()
 export class UserService {
 	constructor(
-		@Inject(Respositories.USER)
+		@Inject(USER_REPOSITORY)
 		private readonly userRepository: UserRepository,
 		private readonly authService: AuthService,
-		private readonly configService: ConfigService,
 		private readonly localizationService: LocalizationService,
 		private readonly userTokenService: UserTokenService
 	) {}
@@ -29,10 +25,7 @@ export class UserService {
 				errorCode: HttpStatus.CONFLICT
 			})
 
-		const { privateKey, publicKey } = crypto.generateKeyPairSync(
-			this.configService.get('crypto.type'),
-			this.configService.get('crypto.options')
-		)
+		const { privateKey, publicKey } = this.authService.generateKeyPair()
 
 		const newUser = await this.userRepository.createUser(payload)
 		if (!newUser)

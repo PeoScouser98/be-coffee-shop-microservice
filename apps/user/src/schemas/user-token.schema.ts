@@ -1,13 +1,13 @@
-import { Collections } from '@app/common'
 import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
+import { USER_TOKEN_COLLECTION } from '../constants/user.constant'
 import { IUserToken } from '../interfaces/user-token.interface'
 
 export type UserTokenDocument = HydratedDocument<IUserToken>
 
 @Schema({
-	collection: Collections.USER_TOKENS,
+	collection: USER_TOKEN_COLLECTION,
 	...defaultSchemaOptions
 })
 export class UserToken extends BaseAbstractDocument {

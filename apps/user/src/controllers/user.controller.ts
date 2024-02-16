@@ -1,11 +1,19 @@
-import { ResponseBody } from '@app/common'
-import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseFilters } from '@nestjs/common'
+import { LocalizationService, ResponseBody, ZodValidationPipe } from '@app/common'
+import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
+import {
+	Body,
+	Controller,
+	HttpCode,
+	HttpStatus,
+	Post,
+	Res,
+	UseFilters,
+	UsePipes
+} from '@nestjs/common'
 import { HttpException } from '@nestjs/common/exceptions'
 import { Response } from 'express'
-import { UserDTO } from '../dto/user.dto'
+import { UserDTO, UserValidator } from '../dto/user.dto'
 import { UserService } from '../services/user.service'
-import { LocalizationService } from '@app/common'
-import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 
 @Controller()
 export class UserController {
@@ -16,6 +24,7 @@ export class UserController {
 
 	@Post('register')
 	@HttpCode(HttpStatus.CREATED)
+	@UsePipes(new ZodValidationPipe(UserValidator))
 	@UseFilters(AllExceptionsFilter)
 	async signup(@Body() payload: UserDTO, @Res() res: Response) {
 		const { data: value, error } = await this.userService.createUser(payload)

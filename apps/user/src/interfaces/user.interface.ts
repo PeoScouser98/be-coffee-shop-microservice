@@ -1,7 +1,7 @@
 import { Types } from 'mongoose'
-import UserRoles from '../constants/user.constant'
+import { UserRoles } from '../constants/user.constant'
 
-export declare interface IUser {
+export interface IUser {
 	_id: Types.ObjectId
 	email: string
 	password: string
@@ -10,6 +10,4 @@ export declare interface IUser {
 	address: string
 	verified: boolean
 	role: UserRoles
-	encryptPassword: (password: string) => string
-	authenticate: (password: string) => boolean
 }

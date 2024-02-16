@@ -1,44 +1,47 @@
-import { ServiceResult, Respositories } from '@app/common'
+import { LocalizationModule, LocalizationService, ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { UserTokenRepository } from 'apps/auth/src/repositories/user-token.repository'
-import { IUser } from 'apps/auth/src/interfaces/user.interface'
-import { UserDocument } from 'apps/auth/src/schemas/user.schema'
-import { UserRepository } from 'apps/auth/src/repositories/user.repository'
 import { Algorithm, JwtPayload } from 'jsonwebtoken'
+import * as crypto from 'node:crypto'
+import { USER_REPOSITORY, USER_TOKEN_REPOSITORY } from '../constants/user.constant'
+import { IUser } from '../interfaces/user.interface'
+import { UserTokenRepository } from '../repositories/user-token.repository'
+import { UserRepository } from '../repositories/user.repository'
+import { UserDocument } from '../schemas/user.schema'
 
 @Injectable()
 export class AuthService {
 	constructor(
-		@Inject(Respositories.USER_TOKEN)
+		@Inject(USER_TOKEN_REPOSITORY)
 		private readonly userTokenRepository: UserTokenRepository,
-		@Inject(Respositories.USER)
+		@Inject(USER_REPOSITORY)
 		private readonly userRepository: UserRepository,
 		private readonly jwtService: JwtService,
-		private readonly configService: ConfigService // private readonly userTokenService: UserTokenService
+		private readonly configService: ConfigService,
+		private readonly localizationService: LocalizationService
 	) {}
 
-	async verifyUser(
+	public async verifyUser(
 		payload: Pick<IUser, 'email' | 'password'>
 	): Promise<ServiceResult<UserDocument>> {
 		const user = await this.userRepository.findUserByEmail(payload.email)
 		if (!user)
 			return new ServiceResult(null, {
-				message: 'Không tìm thấy người dùng',
+				message: this.localizationService.t('error_messages.user.not_found'),
 				errorCode: HttpStatus.NOT_FOUND
 			})
 
 		if (!user.authenticate(payload.password))
 			return new ServiceResult(null, {
-				message: 'Mật khẩu không chính xác',
+				message: this.localizationService.t('error_messages.auth.incorrect_password'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 
 		return new ServiceResult(user)
 	}
 
-	async revokeToken(userId: string) {
+	public async revokeToken(userId: string) {
 		const deletedUserToken = await this.userTokenRepository.deleteByUserId(userId)
 		if (!deletedUserToken)
 			return new ServiceResult(null, {
@@ -47,19 +50,31 @@ export class AuthService {
 			})
 		return new ServiceResult(true)
 	}
-
-	async generateTokenPair({
+	public generateKeyPair() {
+		return crypto.generateKeyPairSync('rsa', {
+			modulusLength: +this.configService.get('CRYPTO_MODULUS_LENGTH'),
+			publicKeyEncoding: {
+				type: this.configService.get('CRYPTO_ENCODING_TYPE'),
+				format: this.configService.get('CRYPTO_ENCODING_FORMAT')
+			},
+			privateKeyEncoding: {
+				type: this.configService.get('CRYPTO_ENCODING_TYPE'),
+				format: this.configService.get('CRYPTO_ENCODING_FORMAT')
+			}
+		})
+	}
+	public async generateTokenPair({
 		payload,
 		privateKey
 	}: {
 		payload: { _id: string; email: string }
 		privateKey: string
 	}) {
-		const algorithm: Algorithm = this.configService.get<Algorithm>('jwt.algorithm')
+		const algorithm: Algorithm = this.configService.get<Algorithm>('JWT_ALGORITHM')
 
 		const exprireTime = {
-			accessToken: this.configService.get<string>('jwt.accessTokenExpires'),
-			refreshToken: this.configService.get<string>('jwt.refreshTokenExpires')
+			accessToken: this.configService.get<string>('JWT_ACCESS_TOKEN_EXP'),
+			refreshToken: this.configService.get<string>('JWT_REFRESH_TOKEN_EXP')
 		}
 
 		const [accessToken, refreshToken] = await Promise.all([
@@ -78,10 +93,10 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	async verifyToken(token: string, publicKey: string): Promise<JwtPayload> {
+	public async verifyToken(token: string, publicKey: string): Promise<JwtPayload> {
 		return await this.jwtService.verifyAsync(token, {
 			publicKey: publicKey,
-			algorithms: [this.configService.get<Algorithm>('jwt.algorithm')]
+			algorithms: [this.configService.get<Algorithm>('JWT_ALGORITHM')]
 		})
 	}
 }

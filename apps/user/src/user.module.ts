@@ -1,77 +1,75 @@
-import configuration from '@app/common/configs'
+import { DatabaseModule, LocalizationModule, RmqModule } from '@app/common'
+
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule, JwtService } from '@nestjs/jwt'
-import { AuthController } from './controllers/auth.controller'
-import { AuthService } from './services/auth.service'
-import { LocalStrategy } from './strategies/local.strategy'
-import { Collections, LocalizationModule, Respositories } from '@app/common'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { UserController } from './controllers/user.controller'
-import { UserRepository } from './repositories/user.repository'
-import { UserTokenRepository } from './repositories/user-token.repository'
-import { UserService } from './services/user.service'
-import { UserTokenService } from './services/user-token.service'
 import { MongooseModule } from '@nestjs/mongoose'
+import { compareSync, genSaltSync, hashSync } from 'bcrypt'
+import {
+	USER_COLLECTION,
+	USER_REPOSITORY,
+	USER_TOKEN_COLLECTION,
+	USER_TOKEN_REPOSITORY
+} from './constants/user.constant'
+import { AuthController } from './controllers/auth.controller'
+import { UserController } from './controllers/user.controller'
+import { UserTokenRepository } from './repositories/user-token.repository'
+import { UserRepository } from './repositories/user.repository'
 import { UserToken, UserTokenSchema } from './schemas/user-token.schema'
 import { UserModelSchema, UserSchema } from './schemas/user.schema'
-import { compareSync, genSaltSync, hashSync } from 'bcrypt'
+import { AuthService } from './services/auth.service'
+import { UserTokenService } from './services/user-token.service'
+import { UserService } from './services/user.service'
+import { LocalStrategy } from './strategies/local.strategy'
 
 @Module({
 	imports: [
-		ClientsModule.register([
-			{
-				name: 'AUTH_SERVICE',
-				transport: Transport.KAFKA,
-				options: {
-					client: {
-						clientId: 'auth',
-						brokers: ['localhost:9092']
-					},
-					consumer: {
-						groupId: 'auth-consumer'
-					}
-				}
-			}
-		]),
+		ConfigModule.forRoot({
+			isGlobal: true,
+			envFilePath: './apps/user/.env'
+		}),
+		RmqModule,
 		LocalizationModule,
+		DatabaseModule,
+		JwtModule.register({ global: true }),
 		MongooseModule.forFeature([
 			{
 				name: UserToken.name,
 				schema: UserTokenSchema,
-				collection: Collections.USER_TOKENS
+				collection: USER_TOKEN_COLLECTION
 			}
 		]),
 		MongooseModule.forFeatureAsync([
 			{
 				imports: [ConfigModule],
 				name: UserModelSchema.name,
-				collection: Collections.USERS,
+				collection: USER_COLLECTION,
+				inject: [ConfigService],
 				useFactory: (configService: ConfigService) => {
 					const schema = UserSchema
 					schema.methods.authenticate = function (password: string) {
 						return compareSync(password, this.password)
 					}
 					schema.methods.encryptPassword = function (password: string) {
-						this.password = hashSync(password, genSaltSync(configService.get('saltRound')))
+						this.password = hashSync(
+							password,
+							genSaltSync(+configService.get('BCRYPT_SALT_ROUND'))
+						)
 						return this
 					}
 
 					schema.pre('save', function (next) {
 						this.password = hashSync(
 							this.password,
-							genSaltSync(configService.get('saltRound'))
+							genSaltSync(+configService.get('BCRYPT_SALT_ROUND'))
 						)
 						next()
 					})
 
 					return schema
-				},
-				inject: [ConfigService]
+				}
 			}
-		]),
-		ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
-		JwtModule.register({ global: true })
+		])
 	],
 	providers: [
 		ConfigService,
@@ -80,8 +78,8 @@ import { compareSync, genSaltSync, hashSync } from 'bcrypt'
 		AuthService,
 		UserService,
 		UserTokenService,
-		{ provide: Respositories.USER, useClass: UserRepository },
-		{ provide: Respositories.USER_TOKEN, useClass: UserTokenRepository }
+		{ provide: USER_REPOSITORY, useClass: UserRepository },
+		{ provide: USER_TOKEN_REPOSITORY, useClass: UserTokenRepository }
 	],
 	controllers: [AuthController, UserController],
 	exports: [AuthService]

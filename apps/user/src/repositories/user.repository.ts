@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
-
+import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { Connection, Model } from 'mongoose'
 import { UserDTO } from '../dto/user.dto'
 import { IUserRepository } from '../interfaces/user.repository.interface'
 import { UserModelSchema, UserDocument } from '../schemas/user.schema'
-import { BaseAbstractRepository } from '@app/common/base/base.abstract.repository'
+import { BaseAbstractRepository } from '@app/common'
 
 @Injectable()
 export class UserRepository
 	extends BaseAbstractRepository<UserDocument>
 	implements IUserRepository
 {
-	constructor(@InjectModel(UserModelSchema.name) private readonly userModel: Model<UserDocument>) {
-		super(userModel)
+	constructor(
+		@InjectModel(UserModelSchema.name) private readonly userModel: Model<UserDocument>,
+		@InjectConnection() connection: Connection
+	) {
+		super(userModel, connection)
 	}
 
 	async findUserByEmail(email: string): Promise<UserDocument> {

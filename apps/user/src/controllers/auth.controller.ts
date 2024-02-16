@@ -1,3 +1,5 @@
+import { LocalizationService, ResponseBody, User } from '@app/common'
+import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import {
 	Controller,
 	Get,
@@ -10,63 +12,55 @@ import {
 	UseFilters,
 	UseGuards
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import * as crypto from 'node:crypto'
-
-import { Request, Response } from 'express'
-import { AuthService } from '../services/auth.service'
-import { UserService } from 'apps/auth/src/services/user.service'
-import { UserTokenService } from 'apps/auth/src/services/user-token.service'
-import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
-import { ResponseBody } from '@app/common'
 import { AuthGuard } from '@nestjs/passport'
+import { Request, Response } from 'express'
+import { IUser } from '../interfaces/user.interface'
+import { AuthService } from '../services/auth.service'
+import { UserTokenService } from '../services/user-token.service'
+import { UserService } from '../services/user.service'
 
 @Controller('auth')
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
-		private readonly configService: ConfigService,
+		private readonly localizationService: LocalizationService,
 		private readonly jwtService: JwtService,
 		private readonly userService: UserService,
 		private readonly userTokenService: UserTokenService
 	) {}
 
+	@UseGuards(AuthGuard('local'))
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
-	@UseGuards(AuthGuard('local'))
 	@UseFilters(AllExceptionsFilter)
-	async login(@Req() req: Request, @Res() res: Response) {
-		const { data: user, error } = await this.authService.verifyUser(req.body)
-		if (error) {
-			throw new HttpException(error.message, error.errorCode)
-		}
+	async login(@User() user: IUser, @Res() res: Response) {
 		// Delete stored user key tokens of previous signin session if exists
-		await this.userTokenService.deleteUserTokenByUserId(user._id.toString())
+		await this.userTokenService.deleteUserTokenByUserId(String(user?._id))
 
 		// Create new public and private key pair
-		const { privateKey, publicKey } = crypto.generateKeyPairSync(
-			this.configService.get('crypto.type'),
-			this.configService.get('crypto.options')
-		)
+		const { privateKey, publicKey } = this.authService.generateKeyPair()
 
 		// Generate new access and refresh tokens
 		const { accessToken, refreshToken } = await this.authService.generateTokenPair({
-			payload: { _id: user._id?.toString(), email: user.email },
+			payload: { _id: String(user?._id), email: user?.email },
 			privateKey: privateKey
 		})
 
 		await this.userTokenService.upsertUserToken({
-			user: String(user._id),
+			user: String(user?._id),
 			public_key: publicKey,
 			private_key: privateKey,
 			refresh_token: refreshToken,
 			used_refresh_tokens: []
 		})
-
-		const response = new ResponseBody({ user, accessToken, refreshToken }, HttpStatus.OK, '')
+		const responseBody = new ResponseBody(
+			{ user, accessToken, refreshToken },
+			HttpStatus.OK,
+			this.localizationService.t('success_messages.auth.logged_in')
+		)
 		return res
-			.cookie('client_id', user._id, {
+			.cookie('client_id', user?._id, {
 				maxAge: 60 * 60 * 24 * 7,
 				httpOnly: true,
 				secure: true,
@@ -84,8 +78,7 @@ export class AuthController {
 				secure: true,
 				sameSite: 'none'
 			})
-			.status(response.statusCode)
-			.json(response)
+			.json(responseBody)
 	}
 
 	@Post('logout')
@@ -115,7 +108,7 @@ export class AuthController {
 				signoutAt: new Date().toLocaleDateString()
 			},
 			HttpStatus.OK,
-			'Đăng xuất thành công'
+			this.localizationService.t('success_messages.auth.logged_out')
 		)
 		return res.status(response.statusCode).json(response)
 	}
@@ -161,7 +154,7 @@ export class AuthController {
 		const response = new ResponseBody(
 			{ accessToken, refreshToken },
 			HttpStatus.OK,
-			'Reset phiên đăng nhập thành công'
+			this.localizationService.t('success_messages.auth.refreshed_token')
 		)
 		return res
 			.cookie('access_token', accessToken, {
