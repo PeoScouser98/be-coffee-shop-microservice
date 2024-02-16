@@ -10,11 +10,4 @@ export class Log {
 	static info(...args: any[]) {
 		console.log(chalk.bold('Info: '), ...args)
 	}
-
-	static status(...args: any[]) {
-		console.log(chalk.bold('Server: '), ...args)
-	}
-	static highlight(text: string) {
-		return chalk.cyan(text)
-	}
 }
