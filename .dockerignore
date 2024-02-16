@@ -1,0 +1,14 @@
+node_modules
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+
+# Misc
+commitlint.config.js
+.prettierignore
+.prettierrc
+README.MD
+
+# Environment
+*.env
