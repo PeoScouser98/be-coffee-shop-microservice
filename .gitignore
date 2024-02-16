@@ -37,5 +37,8 @@ lerna-debug.log*
 # Environment variables
 .env
 
+# Docker
+.dockerignore
+
 # Backup
 dump/
