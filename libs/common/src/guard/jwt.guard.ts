@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { UserTokenService } from 'apps/auth/src/services/user-token.service'
+import { UserTokenService } from 'apps/user/src/services/user-token.service'
+
 import { Request } from 'express'
 
 @Injectable()
