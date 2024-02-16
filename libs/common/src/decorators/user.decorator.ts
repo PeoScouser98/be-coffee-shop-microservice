@@ -1,9 +1,17 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { IUser } from 'apps/auth/src/interfaces/user.interface'
+import { IUser } from 'apps/user/src/interfaces/user.interface'
 
 export const User = createParamDecorator((data: keyof IUser, ctx: ExecutionContext) => {
-	const request = ctx.switchToHttp().getRequest()
+	const request = (() => {
+		if (ctx.getType() === 'http') {
+			return ctx.switchToHttp().getRequest()
+		}
+		if (ctx.getType() === 'rpc') {
+			return ctx.switchToRpc().getData()
+		}
+	})()
+
 	const user = request.user
 
-	return data ? user?.[data] : user
+	return data ? user[data] : user
 })
