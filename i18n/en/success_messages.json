@@ -24,8 +24,8 @@
 	"user": { "registered": "Registered successully", "created": "Added user" },
 	"user_token": {},
 	"auth": {
-		"signed_in": "Signed in successfully",
-		"signed_out": "Signed out successfully",
+		"logged_in": "Logged in successfully",
+		"logged_out": "Logged out successfully",
 		"refreshed_token": "Reset signin session"
 	},
 	"discount": {

@@ -24,8 +24,8 @@
 	"user": { "registered": "Đăng ký thành công", "created": "Thêm người dùng thành công" },
 	"user_token": {},
 	"auth": {
-		"signed_in": "Đăng nhập thành công",
-		"signed_out": "Đăng xuất thành công",
+		"logged_in": "Đăng nhập thành công",
+		"logged_out": "Đăng xuất thành công",
 		"refreshed_token": "Reset phiên đăng nhập thành công"
 	},
 	"discount": {
