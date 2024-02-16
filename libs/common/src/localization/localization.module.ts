@@ -1,21 +1,18 @@
-import { Global, Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { Module } from '@nestjs/common'
 import {
-	I18nModule,
 	AcceptLanguageResolver,
-	QueryResolver,
+	CookieResolver,
 	HeaderResolver,
-	CookieResolver
+	I18nModule,
+	QueryResolver
 } from 'nestjs-i18n'
 import { LocalizationService } from './localization.service'
-import configuration from '../configs'
-@Global()
+
 @Module({
 	imports: [
-		ConfigModule.forRoot({ load: [configuration], isGlobal: true }),
 		I18nModule.forRootAsync({
-			useFactory: (configService: ConfigService) => ({
-				fallbackLanguage: configService.getOrThrow('i18n.fallbackLanguage'),
+			useFactory: () => ({
+				fallbackLanguage: 'vi',
 				loaderOptions: {
 					path: 'i18n',
 					watch: true
@@ -26,8 +23,7 @@ import configuration from '../configs'
 				new HeaderResolver(['Accept-Language']),
 				new CookieResolver(),
 				AcceptLanguageResolver
-			],
-			inject: [ConfigService]
+			]
 		})
 	],
 	exports: [LocalizationModule, LocalizationService],
