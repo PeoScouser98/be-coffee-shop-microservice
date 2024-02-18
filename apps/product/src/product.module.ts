@@ -1,30 +1,47 @@
-import { Respositories } from '@app/common'
+import { DatabaseModule } from '@app/database'
+import { I18nModule } from '@app/i18n'
+import { RmqModule } from '@app/rmq'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import * as _ from 'lodash'
-import * as mongoosePaginate from 'mongoose-paginate-v2'
-import * as mongooseSlugGenerator from 'mongoose-slug-generator'
-import { ProductController } from './product.controller'
-import { ProductService } from './product.service'
+import mongoosePaginate from 'mongoose-paginate-v2'
+import mongooseSlugGenerator from 'mongoose-slug-generator'
+import { ProductCollectionController } from './controllers/product-collection.controller'
+import { ProductLineController } from './controllers/product-line.controller'
+import { ProductController } from './controllers/product.controller'
+import { ProductLineRepository } from './repositories/product-line.repository'
 import {
+	AccessoryProductRepository,
 	ProductRepository,
 	SneakerProductRepository,
 	TopHalfProductRepository
-} from './product.repository'
+} from './repositories/product.repository'
 import { AccessoryProduct, AccessoryProductSchema } from './schemas/accessory-product.schema'
-import { ProductModelSchema, ProductSchema } from './schemas/product.schema'
-import { SneakerProductModelSchema, SneakerProductSchema } from './schemas/sneaker-product.schema'
-import { TopHalfProductModelSchema, TopHalfProductSchema } from './schemas/top-half-product.schema'
-import { Collections } from '@app/common'
-import { DatabaseModule, LocalizationModule } from '@app/common'
+import { ProductCollection, ProductCollectionSchema } from './schemas/product-collection.schema'
+import { ProductLine, ProductLineSchema } from './schemas/product-line.schema'
+import { Product, ProductSchema } from './schemas/product.schema'
+import { SneakerProduct, SneakerProductSchema } from './schemas/sneaker-product.schema'
+import { TopHalfProduct, TopHalfProductSchema } from './schemas/top-half-product.schema'
+import { ProductCollectionService } from './services/product-collection.service'
+import { ProductLineService } from './services/product-line.service'
+import { ProductService } from './services/product.service'
+import { ConfigModule } from '@nestjs/config'
+import { ProductCollectionRepository } from './repositories/product-collection.repository'
+import { AuthModule } from 'apps/auth/src/auth.module'
+
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			isGlobal: true,
+			envFilePath: 'apps/product/.env'
+		}),
 		DatabaseModule,
-		LocalizationModule,
+		RmqModule,
+		AuthModule,
+		I18nModule,
 		MongooseModule.forFeatureAsync([
 			{
-				name: ProductModelSchema.name,
-				collection: Collections.PRODUCTS,
+				name: Product.name,
 				useFactory: () => {
 					const schema = ProductSchema
 					schema.pre('save', function (next) {
@@ -37,37 +54,71 @@ import { DatabaseModule, LocalizationModule } from '@app/common'
 				}
 			},
 			{
-				name: SneakerProductModelSchema.name,
-				collection: Collections.PRODUCT_SNEAKERS,
+				name: SneakerProduct.name,
 				useFactory: () => SneakerProductSchema
 			},
 			{
-				name: TopHalfProductModelSchema.name,
-				collection: Collections.PRODUCT_TOP_HALF,
+				name: TopHalfProduct.name,
 				useFactory: () => TopHalfProductSchema
 			},
 			{
 				name: AccessoryProduct.name,
-				collection: Collections.PRODUCT_ACCESSORIES,
 				useFactory: () => AccessoryProductSchema
+			},
+			{
+				name: ProductCollection.name,
+				useFactory: () => {
+					const schema = ProductCollectionSchema
+					schema.pre('save', function (next) {
+						this.name = _.capitalize(this.name)
+						next()
+					})
+					schema.plugin(mongooseSlugGenerator)
+					return schema
+				}
+			},
+			{
+				name: ProductLine.name,
+				useFactory: () => {
+					const schema = ProductLineSchema
+					schema.pre('save', function (next) {
+						this.name = _.capitalize(this.name)
+						next()
+					})
+					schema.plugin(mongooseSlugGenerator)
+					return schema
+				}
 			}
 		])
 	],
-	controllers: [ProductController],
+	controllers: [ProductController, ProductLineController, ProductCollectionController],
 	providers: [
 		ProductService,
-		{ useClass: ProductRepository, provide: Respositories.PRODUCT },
+		ProductCollectionService,
+		ProductLineService,
+		{
+			useClass: ProductRepository,
+			provide: ProductRepository.provide
+		},
 		{
 			useClass: SneakerProductRepository,
-			provide: Respositories.SNEAKER_PRODUCT
+			provide: SneakerProductRepository.provide
 		},
 		{
 			useClass: TopHalfProductRepository,
-			provide: Respositories.TOP_HALF_PRODUCT
+			provide: TopHalfProductRepository.provide
 		},
 		{
-			useClass: TopHalfProductRepository,
-			provide: Respositories.ACCESSORY_PRODUCT
+			useClass: AccessoryProductRepository,
+			provide: AccessoryProductRepository.provide
+		},
+		{
+			useClass: ProductLineRepository,
+			provide: ProductLineRepository.provide
+		},
+		{
+			useClass: ProductCollectionRepository,
+			provide: ProductCollectionRepository.provide
 		}
 	],
 	exports: [ProductService]

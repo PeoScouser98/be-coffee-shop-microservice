@@ -1,5 +1,4 @@
-import { Collections } from '@app/common'
-import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
 import {
@@ -11,12 +10,13 @@ import {
 import { ISneakerProduct } from '../interfaces/product.interface'
 
 export type SneakerProductDocument = HydratedDocument<ISneakerProduct>
+const COLLECTION_NAME = 'product_sneakers' as const
 
 @Schema({
-	collection: Collections.PRODUCT_SNEAKERS,
-	...defaultSchemaOptions
+	collection: COLLECTION_NAME,
+	...getDefaultSchemaOptions
 })
-export class SneakerProductModelSchema extends BaseAbstractDocument {
+export class SneakerProduct extends BaseAbstractSchema {
 	@Prop({
 		type: [String],
 		required: true,
@@ -57,4 +57,4 @@ export class SneakerProductModelSchema extends BaseAbstractDocument {
 	variants: Array<mongoose.Types.ObjectId>
 }
 
-export const SneakerProductSchema = SchemaFactory.createForClass(SneakerProductModelSchema)
+export const SneakerProductSchema = SchemaFactory.createForClass(SneakerProduct)

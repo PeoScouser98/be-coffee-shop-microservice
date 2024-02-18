@@ -1,20 +1,17 @@
 import mongoose, { FilterQuery, ProjectionType, QueryOptions } from 'mongoose'
 
-export declare interface IBaseRepository<TDocument> {
-	createOne?: (payload: TDocument) => Promise<TDocument>
+export declare interface IBaseRepository<T> {
+	createOne?: (payload: T) => Promise<T>
 
-	findOneById?: (id: string | mongoose.Types.ObjectId) => Promise<TDocument>
+	findOneById?: (id: string | mongoose.Types.ObjectId) => Promise<T>
 
 	findWithFilter?: (
-		filter: FilterQuery<TDocument>,
-		projection?: ProjectionType<TDocument>,
-		opitons?: QueryOptions<TDocument>
-	) => Promise<Array<TDocument | Partial<TDocument>>>
+		filter: FilterQuery<T>,
+		projection?: ProjectionType<T>,
+		opitons?: QueryOptions<T>
+	) => Promise<Array<T | Partial<T>>>
 
-	updateOneById?: (
-		id: string | mongoose.Types.ObjectId,
-		update: Partial<TDocument>
-	) => Promise<TDocument>
+	updateOneById?: (id: string | mongoose.Types.ObjectId, update: Partial<T>) => Promise<T>
 
-	deleteOneById?: (id: string | mongoose.Types.ObjectId) => Promise<TDocument>
+	deleteOneById?: (id: string | mongoose.Types.ObjectId) => Promise<T>
 }

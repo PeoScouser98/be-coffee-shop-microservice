@@ -22,7 +22,13 @@
 		"paths": {
 			"@/*": ["src/*"],
 			"@app/common": ["libs/common/src"],
-			"@app/common/*": ["libs/common/src/*"]
+			"@app/common/*": ["libs/common/src/*"],
+			"@app/i18n": ["libs/i18n/src"],
+			"@app/i18n/*": ["libs/i18n/src/*"],
+			"@app/database": ["libs/database/src"],
+			"@app/database/*": ["libs/database/src/*"],
+			"@app/rmq": ["libs/rmq/src"],
+			"@app/rmq/*": ["libs/rmq/src/*"]
 		},
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	}

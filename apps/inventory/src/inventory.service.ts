@@ -1,4 +1,4 @@
-import { Respositories } from '@app/common'
+import { Repositories } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InventoryDTO } from './dto/inventory.dto'
 import { IInventory } from './interfaces/inventory.interface'
@@ -11,7 +11,7 @@ import { LocalizationService } from '@app/common'
 @Injectable()
 export class InventoryService {
 	constructor(
-		@Inject(Respositories.INVENTORY) private readonly inventoryRepository: InventoryRepository,
+		@Inject(Repositories.INVENTORY) private readonly inventoryRepository: InventoryRepository,
 		private readonly localizationService: LocalizationService
 	) {}
 

@@ -1,14 +1,14 @@
 import { Collections } from '@app/common'
-import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
 import { IDiscount } from '../interfaces/discount.interface'
 import { DiscountApplyingMethod, DiscountTypeEnum } from '../constants/discount.contant'
-import { ProductModelSchema } from 'apps/product/src/schemas/product.schema'
+import { Product } from 'apps/product/src/schemas/product.schema'
 
 export type DiscountDocument = HydratedDocument<IDiscount>
-@Schema({ collection: Collections.DISCOUNTS, ...defaultSchemaOptions })
-export class DiscountModelSchema extends BaseAbstractDocument {
+@Schema({ collection: Collections.DISCOUNTS, ...getDefaultSchemaOptions })
+export class DiscountModelSchema extends BaseAbstractSchema {
 	// Tên chương trình giảm giá
 	@Prop({ type: Object, required: true, trim: true })
 	name: Record<'vi' | 'en', string>
@@ -32,14 +32,14 @@ export class DiscountModelSchema extends BaseAbstractDocument {
 	// Áp dụng mã giảm giá cho nhóm sản phẩm
 	@Prop({
 		type: String,
-		ref: ProductModelSchema.name,
+		ref: Product.name,
 		enum: DiscountApplyingMethod,
 		required: true
 	})
 	applying_method: DiscountApplyingMethod
 
 	// Áp dụng mã giảm giá cho nhóm sản phẩm
-	@Prop({ type: Array, ref: ProductModelSchema.name, required: true })
+	@Prop({ type: Array, ref: Product.name, required: true })
 	applied_for_products: Array<mongoose.Types.ObjectId>
 
 	// Số lượng discount

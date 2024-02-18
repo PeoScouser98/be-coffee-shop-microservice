@@ -1,13 +1,7 @@
-import { Schema, SchemaOptions } from '@nestjs/mongoose'
+import { Schema } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
 
-declare module 'mongoose' {
-	interface SchemaOptions {
-		strictPopulate?: boolean
-	}
-}
-
-export const defaultSchemaOptions: SchemaOptions = {
+export const getDefaultSchemaOptions = () => ({
 	timestamps: {
 		createdAt: 'created_at',
 		updatedAt: 'updated_at',
@@ -17,9 +11,9 @@ export const defaultSchemaOptions: SchemaOptions = {
 	suppressReservedKeysWarning: false,
 	strictQuery: false,
 	strictPopulate: false
-} as const
+})
 
-@Schema(defaultSchemaOptions)
-export class BaseAbstractDocument {
+@Schema(getDefaultSchemaOptions())
+export abstract class BaseAbstractSchema {
 	_id: mongoose.Types.ObjectId
 }

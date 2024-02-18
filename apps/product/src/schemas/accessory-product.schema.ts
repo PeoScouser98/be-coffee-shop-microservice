@@ -1,16 +1,19 @@
-import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
-import { Collections } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { ProductMaterials } from '../constants/product.constant'
 import { IAccessoryProduct } from '../interfaces/product.interface'
 
-type AccessoryProductDocument = HydratedDocument<IAccessoryProduct>
+export type AccessoryProductDocument = HydratedDocument<IAccessoryProduct>
+
+const COLLECTION_NAME = 'product_accessories' as const
+
 @Schema({
-	collection: Collections.PRODUCT_ACCESSORIES,
-	...defaultSchemaOptions
+	collection: COLLECTION_NAME,
+	...getDefaultSchemaOptions()
 })
-class AccessoryProductModelSchema extends BaseAbstractDocument {
+export class AccessoryProduct extends BaseAbstractSchema {
 	@Prop({
 		type: String,
 		enum: ['S', 'M', 'L']
@@ -21,10 +24,4 @@ class AccessoryProductModelSchema extends BaseAbstractDocument {
 	material: ProductMaterials
 }
 
-const AccessoryProductSchema = SchemaFactory.createForClass(AccessoryProductModelSchema)
-
-export {
-	AccessoryProductModelSchema as AccessoryProduct,
-	AccessoryProductSchema,
-	type AccessoryProductDocument
-}
+export const AccessoryProductSchema = SchemaFactory.createForClass(AccessoryProduct)

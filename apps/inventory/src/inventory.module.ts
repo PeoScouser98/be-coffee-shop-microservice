@@ -4,7 +4,7 @@ import { InventoryController } from './inventory.controller'
 import { MongooseModule } from '@nestjs/mongoose'
 import { InventoryModelSchema, InventorySchema } from './schema/inventory.schema'
 import { Collections } from '@app/common'
-import { Respositories } from '@app/common'
+import { Repositories } from '@app/common'
 import { InventoryRepository } from './inventory.repository'
 import { DatabaseModule } from '@app/common'
 
@@ -21,7 +21,7 @@ import { DatabaseModule } from '@app/common'
 	],
 	providers: [
 		InventoryService,
-		{ provide: Respositories.INVENTORY, useClass: InventoryRepository }
+		{ provide: Repositories.INVENTORY, useClass: InventoryRepository }
 	],
 	controllers: [InventoryController],
 	exports: [InventoryService]

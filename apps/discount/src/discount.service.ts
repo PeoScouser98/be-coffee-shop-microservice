@@ -1,4 +1,4 @@
-import { Respositories } from '@app/common'
+import { Repositories } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { DiscountDTO } from './dto/discount.dto'
 import { DiscountRepository } from './discount.repository'
@@ -8,7 +8,7 @@ import { LocalizationService } from '@app/common'
 @Injectable()
 export class DiscountService {
 	constructor(
-		@Inject(Respositories.DISCOUNT) private readonly discountRepository: DiscountRepository,
+		@Inject(Repositories.DISCOUNT) private readonly discountRepository: DiscountRepository,
 		private readonly localizationService: LocalizationService
 	) {}
 

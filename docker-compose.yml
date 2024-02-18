@@ -1,12 +1,13 @@
 services:
-   user:
+   auth:
+      container_name: auth
       build:
          context: .
-         dockerfile: ./apps/user/.dockerfile
+         dockerfile: ./apps/auth/Dockerfile
          target: development
-      command: npm run start:dev user
+      command: npm run start:dev auth
       env_file:
-         - ./apps/user/.env
+         - ./apps/auth/.env
       depends_on:
          - mongodb-primary
          - mongodb-secondary
@@ -16,45 +17,80 @@ services:
          - .:/usr/src/app
          - /usr/src/app/node_modules
       ports:
-         - '3001:3001'
+         - 3001:3001
+      networks:
+         - common
+
+   product:
+      container_name: product
+      build:
+         context: .
+         dockerfile: ./apps/product/Dockerfile
+         target: development
+      command: npm run start:dev product
+      env_file:
+         - ./apps/product/.env
+      depends_on:
+         - mongodb-primary
+         - mongodb-secondary
+         - mongodb-arbiter
+         - rabbitmq
+         - auth
+      volumes:
+         - .:/usr/src/app
+         - /usr/src/app/node_modules
+      ports:
+         - 3002:3002
+      networks:
+         - common
 
    rabbitmq:
+      container_name: rabbitmq
       image: rabbitmq
       ports:
-         - '5672:5672'
+         - 5672:5672
+      networks:
+         - common
 
    mongodb-primary:
-      image: docker.io/bitnami/mongodb:7.0
-      environment:
-         - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
-         - MONGODB_REPLICA_SET_MODE=primary
-         - MONGODB_ROOT_PASSWORD=password123
-         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      container_name: mongodb-primary
+      image: mongo
       volumes:
-         - 'mongodb_master_data:/bitnami/mongodb'
+         - mongodb_master_data:/data/db
+         - ./scripts/rs-init.sh:/scripts/rs-init.sh
+      networks:
+         - common
+      ports:
+         - 27017:27017
+      links:
+         - mongodb-secondary
+         - mongodb-arbiter
+      restart: always
+      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
 
    mongodb-secondary:
-      image: docker.io/bitnami/mongodb:7.0
-      depends_on:
-         - mongodb-primary
-      environment:
-         - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
-         - MONGODB_REPLICA_SET_MODE=secondary
-         - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
-         - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      container_name: mongodb-secondary
+      image: mongo
+      networks:
+         - common
+      ports:
+         - 27018:27017
+      restart: always
+      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
 
    mongodb-arbiter:
-      image: docker.io/bitnami/mongodb:7.0
-      depends_on:
-         - mongodb-primary
-      environment:
-         - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
-         - MONGODB_REPLICA_SET_MODE=arbiter
-         - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
-         - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      container_name: mongodb-arbiter
+      image: mongo
+      networks:
+         - common
+      ports:
+         - 27019:27017
+      restart: always
+      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
 
 volumes:
    mongodb_master_data:
       driver: local
+
+networks:
+   common:

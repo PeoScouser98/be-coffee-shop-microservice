@@ -1,9 +1,4 @@
-export enum ProductTypeEnum {
-	SNEAKER = 'sneakers',
-	TOP_HALF = 'top-half',
-	ACCESSORY = 'accessory'
-}
-
+// Constants
 export const AvailableSneakerSizes = [
 	'35',
 	'36',
@@ -26,6 +21,12 @@ export const AvailableSneakerSizes = [
 
 export const AvailableTopHalfSizes = ['S', 'M', 'L', 'XL'] as const
 
+// Enums
+export enum ProductTypeEnum {
+	SNEAKER = 'sneakers',
+	TOP_HALF = 'top-half',
+	ACCESSORY = 'accessory'
+}
 export enum AvailableSneakerStyles {
 	LOW_TOP = 'Low top',
 	MID_TOP = 'Mid top',
@@ -60,3 +61,4 @@ export enum ProductMaterials {
 	CORDUROY = 'Corduroy',
 	POLYESTER = 'Polyester'
 }
+// #endregion

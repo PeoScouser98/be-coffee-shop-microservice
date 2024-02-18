@@ -8,8 +8,8 @@ import {
 	ProductStatus,
 	ProductTypeEnum
 } from '../constants/product.constant'
-import { ProductCollectionDocument } from 'apps/product-collection/src/schemas/product-collection.schema'
-import { ProductLineDocument } from 'apps/product-line/src/schemas/product-line.schema'
+import { ProductCollectionDocument } from 'apps/product/src/schemas/product-collection.schema'
+import { ProductLineDocument } from 'apps/product/src/schemas/product-line.schema'
 
 export declare interface IProduct {
 	_id: mongoose.Types.ObjectId

@@ -1,5 +1,4 @@
-import { Collections } from '@app/common'
-import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import {
@@ -11,11 +10,12 @@ import { ITopHalfProduct } from '../interfaces/product.interface'
 
 export type TopHalfProductDocument = HydratedDocument<ITopHalfProduct>
 
+const COLLECTION_NAME = 'product_top_half' as const
 @Schema({
-	collection: Collections.PRODUCT_TOP_HALF,
-	...defaultSchemaOptions
+	collection: COLLECTION_NAME,
+	...getDefaultSchemaOptions
 })
-export class TopHalfProductModelSchema extends BaseAbstractDocument {
+export class TopHalfProduct extends BaseAbstractSchema {
 	@Prop({ type: Array, default: AvailableTopHalfSizes })
 	sizes: typeof AvailableTopHalfSizes
 
@@ -46,4 +46,4 @@ export class TopHalfProductModelSchema extends BaseAbstractDocument {
 	material: ProductMaterials
 }
 
-export const TopHalfProductSchema = SchemaFactory.createForClass(TopHalfProductModelSchema)
+export const TopHalfProductSchema = SchemaFactory.createForClass(TopHalfProduct)

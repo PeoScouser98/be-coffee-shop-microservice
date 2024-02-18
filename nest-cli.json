@@ -1,11 +1,11 @@
 {
 	"$schema": "https://json.schemastore.org/nest-cli",
 	"collection": "@nestjs/schematics",
-	"sourceRoot": "apps/user/src",
-	"root": "apps/user",
+	"sourceRoot": "apps/auth/src",
+	"root": "apps/auth",
 	"monorepo": true,
 	"compilerOptions": {
-		"tsConfigPath": "apps/user/tsconfig.app.json",
+		"tsConfigPath": "apps/auth/tsconfig.app.json",
 		"deleteOutDir": true,
 		"webpack": true,
 		"assets": [
@@ -28,18 +28,44 @@
 				"webpack": true
 			}
 		},
-		"user": {
-			"type": "application",
-			"root": "apps/user",
-			"entryFile": "main",
-			"sourceRoot": "apps/user/src",
+		"database": {
+			"type": "library",
+			"root": "libs/database",
+			"entryFile": "index",
+			"sourceRoot": "libs/database/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/user/tsconfig.app.json",
-				"builder": "swc",
+				"tsConfigPath": "libs/database/tsconfig.lib.json"
+			}
+		},
+		"i18n": {
+			"type": "library",
+			"root": "libs/i18n",
+			"entryFile": "index",
+			"sourceRoot": "libs/i18n/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/i18n/tsconfig.lib.json"
+			}
+		},
+		"rmq": {
+			"type": "library",
+			"root": "libs/rmq",
+			"entryFile": "index",
+			"sourceRoot": "libs/rmq/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/rmq/tsconfig.lib.json"
+			}
+		},
+		"auth": {
+			"type": "application",
+			"root": "apps/auth",
+			"entryFile": "main",
+			"sourceRoot": "apps/auth/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/auth/tsconfig.app.json",
+				"webpack": true,
 				"deleteOutDir": true
 			}
 		},
-
 		"product": {
 			"type": "application",
 			"root": "apps/product",
@@ -47,7 +73,8 @@
 			"sourceRoot": "apps/product/src",
 			"compilerOptions": {
 				"tsConfigPath": "apps/product/tsconfig.app.json",
-				"builder": "swc"
+				"webpack": true,
+				"deleteOutDir": true
 			}
 		},
 		"discount": {
@@ -57,17 +84,19 @@
 			"sourceRoot": "apps/discount/src",
 			"compilerOptions": {
 				"tsConfigPath": "apps/discount/tsconfig.app.json",
-				"builder": "swc"
+				"builder": "webpack",
+				"deleteOutDir": true
 			}
 		},
-		"branch-store": {
+		"retail-store": {
 			"type": "application",
-			"root": "apps/branch-store",
+			"root": "apps/retail-store",
 			"entryFile": "main",
-			"sourceRoot": "apps/branch-store/src",
+			"sourceRoot": "apps/retail-store/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/branch-store/tsconfig.app.json",
-				"builder": "swc"
+				"tsConfigPath": "apps/retail-store/tsconfig.app.json",
+				"builder": "webpack",
+				"deleteOutDir": true
 			}
 		},
 		"inventory": {
@@ -77,47 +106,29 @@
 			"sourceRoot": "apps/inventory/src",
 			"compilerOptions": {
 				"tsConfigPath": "apps/inventory/tsconfig.app.json",
-				"builder": "swc"
+				"builder": "webpack",
+				"deleteOutDir": true
 			}
 		},
-		"user-order": {
+		"purchase-order": {
 			"type": "application",
-			"root": "apps/user-order",
+			"root": "apps/purchase-order",
 			"entryFile": "main",
-			"sourceRoot": "apps/user-order/src",
+			"sourceRoot": "apps/purchase-order/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/user-order/tsconfig.app.json",
-				"builder": "swc"
+				"tsConfigPath": "apps/purchase-order/tsconfig.app.json",
+				"builder": "webpack",
+				"deleteOutDir": true
 			}
 		},
-		"user-cart": {
+		"shopping-cart": {
 			"type": "application",
-			"root": "apps/user-cart",
+			"root": "apps/shopping-cart",
 			"entryFile": "main",
-			"sourceRoot": "apps/user-cart/src",
+			"sourceRoot": "apps/shopping-cart/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/user-cart/tsconfig.app.json",
-				"builder": "swc"
-			}
-		},
-		"product-collection": {
-			"type": "application",
-			"root": "apps/product-collection",
-			"entryFile": "main",
-			"sourceRoot": "apps/product-collection/src",
-			"compilerOptions": {
-				"tsConfigPath": "apps/product-collection/tsconfig.app.json",
-				"builder": "swc"
-			}
-		},
-		"product-line": {
-			"type": "application",
-			"root": "apps/product-line",
-			"entryFile": "main",
-			"sourceRoot": "apps/product-line/src",
-			"compilerOptions": {
-				"tsConfigPath": "apps/product-line/tsconfig.app.json",
-				"builder": "swc"
+				"tsConfigPath": "apps/shopping-cart/tsconfig.app.json",
+				"webpack": true
 			}
 		}
 	}

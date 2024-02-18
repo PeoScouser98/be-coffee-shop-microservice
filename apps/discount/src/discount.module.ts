@@ -1,5 +1,5 @@
 import { Collections } from '@app/common'
-import { Respositories } from '@app/common'
+import { Repositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import * as mongoosePaginate from 'mongoose-paginate-v2'
@@ -31,7 +31,7 @@ import { DatabaseModule } from '@app/common'
 			}
 		])
 	],
-	providers: [DiscountService, { provide: Respositories.DISCOUNT, useClass: DiscountRepository }],
+	providers: [DiscountService, { provide: Repositories.DISCOUNT, useClass: DiscountRepository }],
 	controllers: [DiscountController]
 })
 export class DiscountModule {}

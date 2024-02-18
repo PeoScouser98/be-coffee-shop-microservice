@@ -1,19 +1,21 @@
-import { Collections } from '@app/common'
-import { BaseAbstractDocument, defaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
 import { IProduct } from '../interfaces/product.interface'
-import { ProductCollectionDocument } from 'apps/product-collection/src/schemas/product-collection.schema'
-import { ProductLineDocument } from 'apps/product-line/src/schemas/product-line.schema'
+import { ProductCollectionDocument } from 'apps/product/src/schemas/product-collection.schema'
+import { ProductLineDocument } from 'apps/product/src/schemas/product-line.schema'
+import { Locale } from '@app/i18n'
 
 export type ProductDocument = HydratedDocument<IProduct>
 
+const COLLECTION_NAME = 'products' as const
+
 @Schema({
-	collection: Collections.PRODUCTS,
-	...defaultSchemaOptions
+	collection: COLLECTION_NAME,
+	...getDefaultSchemaOptions
 })
-export class ProductModelSchema extends BaseAbstractDocument {
+export class Product extends BaseAbstractSchema {
 	@Prop({ type: String, required: true, trim: true })
 	name: string
 
@@ -67,4 +69,4 @@ export class ProductModelSchema extends BaseAbstractDocument {
 	product_line: mongoose.Types.ObjectId | ProductLineDocument
 }
 
-export const ProductSchema = SchemaFactory.createForClass(ProductModelSchema)
+export const ProductSchema = SchemaFactory.createForClass(Product)
