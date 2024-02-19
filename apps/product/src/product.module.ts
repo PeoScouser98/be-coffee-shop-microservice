@@ -1,14 +1,17 @@
 import { DatabaseModule } from '@app/database'
 import { I18nModule } from '@app/i18n'
 import { RmqModule } from '@app/rmq'
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
+import { AuthModule } from 'apps/auth/src/auth.module'
 import * as _ from 'lodash'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import mongooseSlugGenerator from 'mongoose-slug-generator'
 import { ProductCollectionController } from './controllers/product-collection.controller'
 import { ProductLineController } from './controllers/product-line.controller'
 import { ProductController } from './controllers/product.controller'
+import { ProductCollectionRepository } from './repositories/product-collection.repository'
 import { ProductLineRepository } from './repositories/product-line.repository'
 import {
 	AccessoryProductRepository,
@@ -25,15 +28,12 @@ import { TopHalfProduct, TopHalfProductSchema } from './schemas/top-half-product
 import { ProductCollectionService } from './services/product-collection.service'
 import { ProductLineService } from './services/product-line.service'
 import { ProductService } from './services/product.service'
-import { ConfigModule } from '@nestjs/config'
-import { ProductCollectionRepository } from './repositories/product-collection.repository'
-import { AuthModule } from 'apps/auth/src/auth.module'
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: 'apps/product/.env'
+			envFilePath: './apps/product/.env'
 		}),
 		DatabaseModule,
 		RmqModule,
@@ -123,8 +123,4 @@ import { AuthModule } from 'apps/auth/src/auth.module'
 	],
 	exports: [ProductService]
 })
-export class ProductModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer.apply().forRoutes()
-	}
-}
+export class ProductModule {}
