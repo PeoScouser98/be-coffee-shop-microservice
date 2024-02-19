@@ -3,7 +3,7 @@ import { RmqService } from './rmq.service'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { ConfigService } from '@nestjs/config'
 
-type TRmqModuleOptions = {
+type RmqModuleOptions = {
 	name: string
 }
 
@@ -12,7 +12,7 @@ type TRmqModuleOptions = {
 	exports: [RmqService]
 })
 export class RmqModule {
-	static register({ name }: TRmqModuleOptions): DynamicModule {
+	static register({ name }: RmqModuleOptions): DynamicModule {
 		return {
 			module: RmqModule,
 			imports: [
@@ -23,7 +23,11 @@ export class RmqModule {
 							transport: Transport.RMQ,
 							options: {
 								urls: [configService.get<string>('RABBIT_MQ_URI')],
-								queue: configService.get<string>(`RABBIT_MQ_${name}_QUEUE`)
+								queue: configService.get<string>(`RABBIT_MQ_${name}_QUEUE`),
+								socketOptions: {
+									heartbeatIntervalInSeconds: 60
+								},
+								durable: false
 							}
 						}),
 						inject: [ConfigService]
