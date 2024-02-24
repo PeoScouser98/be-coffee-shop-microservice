@@ -5,6 +5,8 @@ import { IBaseRepository } from './base.repository.interface'
 export abstract class BaseAbstractRepository<T extends BaseAbstractSchema>
 	implements IBaseRepository<T>
 {
+	provide: string
+
 	constructor(
 		private readonly model: Model<T>,
 		private readonly connection: Connection
