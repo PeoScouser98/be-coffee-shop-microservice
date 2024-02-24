@@ -5,7 +5,6 @@ import {
 	HttpCode,
 	HttpException,
 	HttpStatus,
-	ParseBoolPipe,
 	ParseIntPipe,
 	Query,
 	Res,
@@ -17,9 +16,6 @@ import { AllExceptionsFilter, JwtGuard, ResponseBody, Roles } from '@app/common'
 import { Response } from 'express'
 import { I18nService } from '@app/i18n'
 import { UserRoles } from 'apps/auth/src/constants/user.constant'
-import { isNil, omitBy } from 'lodash'
-import { FilterQuery } from 'mongoose'
-import { PostDocument } from './schemas/post.schema'
 
 @Controller()
 export class PostController {
