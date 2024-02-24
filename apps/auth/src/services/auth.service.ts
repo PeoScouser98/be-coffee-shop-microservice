@@ -50,6 +50,7 @@ export class AuthService {
 			})
 		return new ServiceResult(true)
 	}
+
 	public generateKeyPair() {
 		return crypto.generateKeyPairSync('rsa', {
 			modulusLength: +this.configService.get('CRYPTO_MODULUS_LENGTH'),
@@ -63,6 +64,7 @@ export class AuthService {
 			}
 		})
 	}
+
 	public async generateTokenPair({
 		payload,
 		privateKey

@@ -14,7 +14,7 @@ const COLLECTION_NAME = 'users' as const
 	collection: COLLECTION_NAME,
 	...getDefaultSchemaOptions()
 })
-export class UserModelSchema {
+export class User {
 	@Prop({
 		type: String,
 		required: true,
@@ -61,4 +61,4 @@ export class UserModelSchema {
 	})
 	role: UserRoles
 }
-export const UserSchema = SchemaFactory.createForClass(UserModelSchema)
+export const UserSchema = SchemaFactory.createForClass(User)

@@ -16,7 +16,7 @@ async function bootstrap() {
 	app.use(cookieParser())
 	app.use(compression())
 	await app.listen(configService.get('PORT'), () =>
-		Log.info(`User service is running on port ${configService.get('PORT')}`)
+		Log.info(`Auth service is running on port ${configService.get('PORT')}`)
 	)
 }
 bootstrap()

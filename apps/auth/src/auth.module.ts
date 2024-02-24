@@ -8,7 +8,7 @@ import { UserController } from './controllers/user.controller'
 import { UserTokenRepository } from './repositories/user-token.repository'
 import { UserRepository } from './repositories/user.repository'
 import { UserToken, UserTokenSchema } from './schemas/user-token.schema'
-import { UserModelSchema, UserSchema } from './schemas/user.schema'
+import { User, UserSchema } from './schemas/user.schema'
 import { AuthService } from './services/auth.service'
 import { UserTokenService } from './services/user-token.service'
 import { UserService } from './services/user.service'
@@ -30,7 +30,7 @@ import { RmqModule } from '@app/rmq'
 		MongooseModule.forFeatureAsync([
 			{
 				imports: [ConfigModule],
-				name: UserModelSchema.name,
+				name: User.name,
 				inject: [ConfigService],
 				useFactory: (configService: ConfigService) => {
 					const schema = UserSchema

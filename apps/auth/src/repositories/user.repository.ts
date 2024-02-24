@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 import { Connection, Model } from 'mongoose'
 import { UserDTO } from '../dto/user.dto'
 import { IUserRepository } from '../interfaces/user.repository.interface'
-import { UserModelSchema, UserDocument } from '../schemas/user.schema'
+import { User, UserDocument } from '../schemas/user.schema'
 import { BaseAbstractRepository } from '@app/common'
 
 @Injectable()
@@ -14,7 +14,7 @@ export class UserRepository
 	static provide: string = 'USER_REPOSITORY' as const
 
 	constructor(
-		@InjectModel(UserModelSchema.name) private readonly userModel: Model<UserDocument>,
+		@InjectModel(User.name) private readonly userModel: Model<UserDocument>,
 		@InjectConnection() connection: Connection
 	) {
 		super(userModel, connection)

@@ -1,4 +1,4 @@
-import { ResponseBody, User } from '@app/common'
+import { ResponseBody, CurrentUser } from '@app/common'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import {
 	Controller,
@@ -35,7 +35,7 @@ export class AuthController {
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@UseFilters(AllExceptionsFilter)
-	async login(@User() user: IUser, @Res() res: Response) {
+	async login(@CurrentUser() user: IUser, @Res() res: Response) {
 		// Delete stored user key tokens of previous signin session if exists
 		await this.userTokenService.deleteUserTokenByUserId(String(user?._id))
 
