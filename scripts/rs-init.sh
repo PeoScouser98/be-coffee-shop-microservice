@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mongod <<EOF
+mongosh <<EOF
 var config = {
-    "_id": "dbrs",
+    "_id": "rs0",
     "version": 1,
     "members": [
         {
@@ -23,5 +23,16 @@ var config = {
     ]
 };
 rs.initiate(config, { force: true });
-rs.status();
+exit;
 EOF
+
+MESSAGE="\n[Mongodb] ::: Replica set configuration is applied.\n"
+
+echo -e "\033[32m$MESSAGE\033[0m"
+
+
+
+
+
+
+

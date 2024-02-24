@@ -44,53 +44,95 @@ services:
       networks:
          - common
 
+   post:
+      container_name: post
+      build:
+         context: .
+         dockerfile: ./apps/post/Dockerfile
+         target: development
+      command: npm run start:dev post
+      env_file:
+         - ./apps/post/.env
+      depends_on:
+         - mongodb-primary
+         - mongodb-secondary
+         - mongodb-arbiter
+         - rabbitmq
+         - redis
+         - auth
+      volumes:
+         - .:/usr/src/app
+         - /usr/src/app/node_modules
+      ports:
+         - 3004:3004
+      networks:
+         - common
+
    rabbitmq:
       container_name: rabbitmq
       image: rabbitmq
-      ports:
-         - 5672:5672
       networks:
          - common
+      ports:
+         - 5672:5672
+         - 15672:15672
+
+   redis:
+      container_name: redis
+      image: redis
+      volumes:
+         - cache:/data
+      networks:
+         - common
+      ports:
+         - 6379:6379
 
    mongodb-primary:
       container_name: mongodb-primary
       image: mongo
       volumes:
          - mongodb_master_data:/data/db
-         - ./scripts/rs-init.sh:/scripts/rs-init.sh
-      networks:
-         - common
+         - ./scripts:/scripts
       ports:
-         - 27017:27017
+         - 27001:27017
       links:
          - mongodb-secondary
          - mongodb-arbiter
       restart: always
-      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
+      healthcheck:
+         test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongod -u mongod-p mongod --quiet) -eq 1
+         interval: 10s
+         start_period: 30s
+      command: ['--bind_ip_all', '--replSet', 'rs0']
+      networks:
+         - common
 
    mongodb-secondary:
       container_name: mongodb-secondary
       image: mongo
+      ports:
+         - 27002:27017
+      restart: always
+      command: ['--bind_ip_all', '--replSet', 'rs0']
       networks:
          - common
-      ports:
-         - 27018:27017
-      restart: always
-      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
 
    mongodb-arbiter:
       container_name: mongodb-arbiter
       image: mongo
+      ports:
+         - 27003:27017
+      restart: always
+      command: ['--bind_ip_all', '--replSet', 'rs0']
       networks:
          - common
-      ports:
-         - 27019:27017
-      restart: always
-      entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'dbrs']
 
 volumes:
    mongodb_master_data:
       driver: local
+   cache:
+      driver: local
 
 networks:
    common:
+      driver: bridge
