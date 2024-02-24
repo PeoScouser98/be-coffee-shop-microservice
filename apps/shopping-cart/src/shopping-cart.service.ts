@@ -1,22 +1,22 @@
-import { Repositories } from '@app/common'
 import { ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { pick } from 'lodash'
-import { UserCartRepository } from './user-cart.repository'
+import { ShoppingCartRepository } from './shopping-cart.repository'
 import { ProductService } from 'apps/product/src/services/product.service'
 import { InventoryService } from 'apps/inventory/src/inventory.service'
-import { LocalizationService } from '@app/common'
+import { I18nService } from '@app/i18n'
 
 @Injectable()
 export class UserCartService {
 	constructor(
-		@Inject(Repositories.USER_CART) private readonly userCartRepository: UserCartRepository,
+		@Inject(ShoppingCartRepository.provide)
+		private readonly userCartRepository: ShoppingCartRepository,
 		private readonly productService: ProductService,
 		private readonly inventoryService: InventoryService,
-		private readonly localizationService: LocalizationService
+		private readonly i18nService: I18nService
 	) {}
 
-	public async createUserCart(user: string, productId: string, quantity = 1) {
+	public async createShoppingCart(user: string, productId: string, quantity = 1) {
 		const { data, error } = await this.productService.getPublishedProductById(productId)
 		if (error) return new ServiceResult(null, error)
 		const userCart = await this.userCartRepository.upsertCartItemByUser(user, {
@@ -26,7 +26,7 @@ export class UserCartService {
 		return new ServiceResult(userCart)
 	}
 
-	public async updateUserCart(user: string, productId: string, quantity: number) {
+	public async updateShoppingCart(user: string, productId: string, quantity: number) {
 		const [
 			{ data: product, error: findProductError },
 			{ data: productInventory, error: findProductInventoryError }
@@ -39,14 +39,14 @@ export class UserCartService {
 		// If cart item's quantity is greater than product inventory stock => throw error
 		if (quantity > productInventory.stock)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.user_cart.out_of_order'),
+				message: this.i18nService.t('error_messages.user_cart.out_of_order'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 
 		const userCart = await this.userCartRepository.findOneById(user)
 		// If user's cart does not exist => create new one
 		if (!userCart) {
-			const newUserCart = await this.createUserCart(user, productId, quantity)
+			const newUserCart = await this.createShoppingCart(user, productId, quantity)
 			return new ServiceResult(newUserCart)
 		}
 		// If user's cart is already existed and empty => add item to cart
@@ -56,7 +56,7 @@ export class UserCartService {
 			const updatedUserCart = await userCart.save()
 			return new ServiceResult(updatedUserCart)
 		}
-		// If user's cart and item already existed => update item quantity
+		// If user's cart and item alreadky existed => update item quantity
 		const existedItemInUserCart = userCart.items.find((item) => String(item._id) === productId)
 		if (existedItemInUserCart) {
 			// If current item's quantity equals to 0 => delete this item from user's cart

@@ -1,15 +1,21 @@
-import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { getDefaultSchemaOptions } from '@app/common'
-import { UserCartStatus } from '../constants/user-cart.constant'
+import { ShoppingCartStatus } from '../constants/shopping-cart.constant'
 import mongoose, { HydratedDocument } from 'mongoose'
-import { ICartItem, IUserCart } from '../interfaces/user-cart.interface'
+import { ICartItem, IShoppingCart } from '../interfaces/shopping-cart.interface'
 
-export type UserCartDocument = HydratedDocument<IUserCart>
-@Schema({ collection: Collections.USER_CART, ...getDefaultSchemaOptions })
+export type ShoppingCartDocument = HydratedDocument<IShoppingCart>
+
+const COLLECTION_NAME = 'shopping_carts'
+
+@Schema({ collection: COLLECTION_NAME, ...getDefaultSchemaOptions })
 export class UserCartModelSchema {
-	@Prop({ type: String, enum: Object.values(UserCartStatus), default: UserCartStatus.ACTIVE })
-	status: UserCartStatus
+	@Prop({
+		type: String,
+		enum: Object.values(ShoppingCartStatus),
+		default: ShoppingCartStatus.ACTIVE
+	})
+	status: ShoppingCartStatus
 
 	@Prop({ type: Array, required: true, default: [] })
 	items: Array<ICartItem>
