@@ -28,7 +28,10 @@
 			"@app/database": ["libs/database/src"],
 			"@app/database/*": ["libs/database/src/*"],
 			"@app/rmq": ["libs/rmq/src"],
-			"@app/rmq/*": ["libs/rmq/src/*"]
+			"@app/rmq/*": ["libs/rmq/src/*"],
+			"@app/redis": ["libs/redis/src"],
+			"@app/redis/*": ["libs/redis/src/*"],
+			"@i18n/*": ["i18n/*"]
 		},
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	}
