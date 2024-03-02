@@ -1,3 +1,7 @@
+import { DatabaseModule } from '@app/database'
+import { I18nModule } from '@app/i18n'
+import { MailerModule } from '@app/mailer'
+import { RmqModule } from '@app/rmq'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule, JwtService } from '@nestjs/jwt'
@@ -13,19 +17,17 @@ import { AuthService } from './services/auth.service'
 import { UserTokenService } from './services/user-token.service'
 import { UserService } from './services/user.service'
 import { LocalStrategy } from './strategies/local.strategy'
-import { I18nModule } from '@app/i18n'
-import { DatabaseModule } from '@app/database'
-import { RmqModule } from '@app/rmq'
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: './apps/user/.env'
+			envFilePath: 'apps/auth/.env'
 		}),
 		RmqModule,
 		I18nModule,
 		DatabaseModule,
+		MailerModule,
 		JwtModule.register({ global: true }),
 		MongooseModule.forFeatureAsync([
 			{
@@ -33,25 +35,18 @@ import { RmqModule } from '@app/rmq'
 				name: User.name,
 				inject: [ConfigService],
 				useFactory: (configService: ConfigService) => {
-					const schema = UserSchema
-					schema.methods.authenticate = function (password: string) {
+					UserSchema.methods.authenticate = function (password: string) {
 						return compareSync(password, this.password)
 					}
-					schema.methods.encryptPassword = function (password: string) {
-						this.password = hashSync(
-							password,
-							genSaltSync(+configService.get('BCRYPT_SALT_ROUND'))
-						)
-						return this
-					}
-					schema.pre('save', function (next) {
+
+					UserSchema.pre('save', function (next) {
 						this.password = hashSync(
 							this.password,
 							genSaltSync(+configService.get('BCRYPT_SALT_ROUND'))
 						)
 						next()
 					})
-					return schema
+					return UserSchema
 				}
 			},
 			{

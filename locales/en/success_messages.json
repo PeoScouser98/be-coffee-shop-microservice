@@ -26,7 +26,8 @@
 	"auth": {
 		"logged_in": "Logged in successfully",
 		"logged_out": "Logged out successfully",
-		"refreshed_token": "Reset signin session"
+		"refreshed_token": "Reset signin session",
+		"reset_password": "Your password has already been reset"
 	},
 	"discount": {
 		"created": "Created new discount code",

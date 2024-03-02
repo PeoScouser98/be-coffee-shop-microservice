@@ -13,7 +13,7 @@ export class UserService {
 		@Inject(UserRepository.provide)
 		private readonly userRepository: UserRepository,
 		private readonly authService: AuthService,
-		private readonly localizationService: I18nService,
+		private readonly i18nService: I18nService,
 		private readonly userTokenService: UserTokenService
 	) {}
 
@@ -21,7 +21,7 @@ export class UserService {
 		const existedUser = await this.userRepository.findUserByEmail(payload.email)
 		if (existedUser)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.user.conflict'),
+				message: this.i18nService.t('error_messages.user.conflict'),
 				errorCode: HttpStatus.CONFLICT
 			})
 
@@ -30,7 +30,7 @@ export class UserService {
 		const newUser = await this.userRepository.createUser(payload)
 		if (!newUser)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.user.creating'),
+				message: this.i18nService.t('error_messages.user.creating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 
@@ -56,7 +56,7 @@ export class UserService {
 		const user = await this.userRepository.findOneById(userId)
 		if (!user)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.user.not_found'),
+				message: this.i18nService.t('error_messages.user.not_found'),
 				errorCode: HttpStatus.NOT_FOUND
 			})
 		return new ServiceResult(user, null)

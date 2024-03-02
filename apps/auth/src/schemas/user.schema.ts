@@ -5,7 +5,6 @@ import { UserRoles } from '../constants/user.constant'
 import { IUser } from '../interfaces/user.interface'
 
 export type UserDocument = HydratedDocument<IUser> & {
-	encryptPassword: (password: string) => string
 	authenticate: (password: string) => boolean
 }
 

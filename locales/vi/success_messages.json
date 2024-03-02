@@ -21,12 +21,16 @@
 		"updated": "Cập nhật cửa hàng sản phẩm thành công",
 		"deleted": "Đã xóa cửa hàng sản phẩm"
 	},
-	"user": { "registered": "Đăng ký thành công", "created": "Thêm người dùng thành công" },
+	"user": {
+		"registered": "Đăng ký thành công",
+		"created": "Thêm người dùng thành công"
+	},
 	"user_token": {},
 	"auth": {
 		"logged_in": "Đăng nhập thành công",
 		"logged_out": "Đăng xuất thành công",
-		"refreshed_token": "Reset phiên đăng nhập thành công"
+		"refreshed_token": "Reset phiên đăng nhập thành công",
+		"reset_password": "Mật khẩu đã được đặt lại thành công"
 	},
 	"discount": {
 		"created": "Tạo mã giảm giá thành công",

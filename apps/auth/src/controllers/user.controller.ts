@@ -27,7 +27,7 @@ export class UserController {
 	@HttpCode(HttpStatus.CREATED)
 	@UsePipes(new ZodValidationPipe(UserValidator))
 	@UseFilters(AllExceptionsFilter)
-	async signup(@Body() payload: UserDTO, @Res() res: Response) {
+	async registerAccount(@Body() payload: UserDTO, @Res() res: Response) {
 		const { data: value, error } = await this.userService.createUser(payload)
 		if (error) throw new HttpException(error, error.errorCode)
 		const response = new ResponseBody(

@@ -21,7 +21,7 @@ export class UserTokenRepository
 	}
 
 	async findOneByUserId(userId: string): Promise<UserTokenDocument> {
-		return await this.userTokenModel.findOne({ user: userId })
+		return await this.userTokenModel.findOne({ user: new mongoose.Types.ObjectId(userId) })
 	}
 
 	async findOneByRefreshToken(refreshToken: string): Promise<UserTokenDocument> {

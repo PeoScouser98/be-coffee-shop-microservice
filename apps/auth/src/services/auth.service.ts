@@ -9,6 +9,7 @@ import { UserTokenRepository } from '../repositories/user-token.repository'
 import { UserRepository } from '../repositories/user.repository'
 import { UserDocument } from '../schemas/user.schema'
 import { I18nService } from '@app/i18n'
+import { MailerService } from '@nestjs-modules/mailer'
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,8 @@ export class AuthService {
 		private readonly userRepository: UserRepository,
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
-		private readonly localizationService: I18nService
+		private readonly i18nService: I18nService,
+		private readonly mailerService: MailerService
 	) {}
 
 	public async verifyUser(
@@ -28,13 +30,13 @@ export class AuthService {
 		const user = await this.userRepository.findUserByEmail(payload.email)
 		if (!user)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.user.not_found'),
+				message: this.i18nService.t('error_messages.user.not_found'),
 				errorCode: HttpStatus.NOT_FOUND
 			})
 
 		if (!user.authenticate(payload.password))
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.auth.incorrect_password'),
+				message: this.i18nService.t('error_messages.auth.incorrect_password'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 
@@ -100,5 +102,86 @@ export class AuthService {
 			publicKey: publicKey,
 			algorithms: [this.configService.get<Algorithm>('JWT_ALGORITHM')]
 		})
+	}
+
+	public async changePassword(payload: {
+		email: string
+		currentPassword: string
+		newPassword: string
+	}) {
+		const user = await this.userRepository.findUserByEmail(payload.email)
+		if (!user)
+			return new ServiceResult(null, {
+				message: this.i18nService.t('error_messages.user.not_found'),
+				errorCode: HttpStatus.NOT_FOUND
+			})
+		if (!user.authenticate(payload.currentPassword))
+			return new ServiceResult(null, {
+				message: this.i18nService.t('error_messages.user.incorrect_password'),
+				errorCode: HttpStatus.BAD_REQUEST
+			})
+
+		user.password = payload.newPassword
+		const updatedUser = await user.save()
+		return new ServiceResult(updatedUser)
+	}
+
+	public async recoverPassword(origin: string, payload) {
+		const user = await this.userRepository.findUserByEmail(payload.email)
+		if (!user)
+			return new ServiceResult(null, {
+				message: this.i18nService.t('error_messages.user.not_found'),
+				errorCode: HttpStatus.NOT_FOUND
+			})
+		const { publicKey, privateKey } = this.generateKeyPair()
+		const { accessToken, refreshToken } = await this.generateTokenPair({
+			payload: { _id: String(user._id), email: user.email },
+			privateKey
+		})
+		await this.userTokenRepository.updateOneByUserId(
+			user._id,
+			{
+				public_key: publicKey,
+				private_key: privateKey,
+				refresh_token: refreshToken,
+				$addToSet: { used_refresh_tokens: refreshToken }
+			},
+			{ new: true, upsert: true }
+		)
+
+		const result = await this.mailerService.sendMail({
+			to: user.email,
+			subject: 'Ananas - Request to reset your password',
+			template: 'reset-password',
+			context: {
+				url: `${origin}/reset-password?token=${accessToken}&user_id=${user._id}`,
+				display_name: user.display_name
+			}
+		})
+
+		return new ServiceResult({
+			accessToken,
+			clientId: user._id,
+			result: result.response
+		})
+	}
+
+	public async resetPassword(accessToken: string, userId: string, newPassword: string) {
+		const reliableUserToken = await this.userTokenRepository.findOneByUserId(userId)
+		if (!reliableUserToken)
+			return new ServiceResult(null, {
+				message: this.i18nService.t('error_messages.user_token.not_found'),
+				errorCode: HttpStatus.NOT_FOUND
+			})
+		const payload = await this.verifyToken(accessToken, reliableUserToken.public_key)
+		const user = await this.userRepository.findUserByEmail(payload.email)
+		if (!user)
+			return new ServiceResult(null, {
+				message: this.i18nService.t('error_messages.user.not_found'),
+				errorCode: HttpStatus.NOT_FOUND
+			})
+		user.password = newPassword
+		const updatedUser = await user.save()
+		return new ServiceResult(updatedUser)
 	}
 }
