@@ -20,7 +20,6 @@
 		"noFallthroughCasesInSwitch": false,
 		"baseUrl": "./",
 		"paths": {
-			"@/*": ["src/*"],
 			"@app/common": ["libs/common/src"],
 			"@app/common/*": ["libs/common/src/*"],
 			"@app/i18n": ["libs/i18n/src"],
@@ -31,7 +30,8 @@
 			"@app/rmq/*": ["libs/rmq/src/*"],
 			"@app/redis": ["libs/redis/src"],
 			"@app/redis/*": ["libs/redis/src/*"],
-			"@i18n/*": ["i18n/*"]
+			"@app/mailer": ["libs/mailer/src"],
+			"@app/mailer/*": ["libs/mailer/src/*"]
 		},
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	}
