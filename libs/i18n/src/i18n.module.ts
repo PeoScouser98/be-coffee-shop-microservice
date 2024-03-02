@@ -1,22 +1,28 @@
 import { Module } from '@nestjs/common'
-import * as NestI18n from 'nestjs-i18n'
+import {
+	I18nModule as NestI18nModule,
+	QueryResolver,
+	HeaderResolver,
+	CookieResolver,
+	AcceptLanguageResolver
+} from 'nestjs-i18n'
 import { I18nService } from './i18n.service'
 
 @Module({
 	imports: [
-		NestI18n.I18nModule.forRootAsync({
+		NestI18nModule.forRootAsync({
 			useFactory: () => ({
 				fallbackLanguage: 'vi',
 				loaderOptions: {
-					path: 'i18n',
+					path: 'locales',
 					watch: true
 				}
 			}),
 			resolvers: [
-				{ use: NestI18n.QueryResolver, options: ['lang'] },
-				new NestI18n.HeaderResolver(['Accept-Language']),
-				new NestI18n.CookieResolver(),
-				NestI18n.AcceptLanguageResolver
+				{ use: QueryResolver, options: ['lang'] },
+				new HeaderResolver(['Accept-Language']),
+				new CookieResolver(),
+				AcceptLanguageResolver
 			]
 		})
 	],
