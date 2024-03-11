@@ -27,7 +27,10 @@ export class ProductLineService {
 	}
 
 	async updateProductLine(id: string, payload: Partial<ProductLineDTO>) {
-		const updatedProductLine = await this.productLineRepository.updateOneById(id, payload)
+		const updatedProductLine = await (
+			await this.productLineRepository.updateOneById(id, payload)
+		).save()
+
 		if (!updatedProductLine)
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product_line.updating'),

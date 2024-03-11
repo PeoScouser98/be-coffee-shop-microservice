@@ -13,7 +13,7 @@ export type TopHalfProductDocument = HydratedDocument<ITopHalfProduct>
 const COLLECTION_NAME = 'product_top_half' as const
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class TopHalfProduct extends BaseAbstractSchema {
 	@Prop({ type: Array, default: AvailableTopHalfSizes })

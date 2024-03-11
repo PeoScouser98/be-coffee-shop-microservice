@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-export const ProductLineValidator = z.object({
+export const productLineValidator = z.object({
 	name: z.string()
 })
 
-export type ProductLineDTO = z.infer<typeof ProductLineValidator>
+export type ProductLineDTO = z.infer<typeof productLineValidator>

@@ -1,31 +1,43 @@
+import { DatabaseModule } from '@app/database'
+import { I18nModule } from '@app/i18n'
+import { RmqModule } from '@app/rmq'
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
+import { AuthModule } from 'apps/auth/src/auth.module'
 import { UserCartModelSchema, UserCartSchema } from './schemas/shopping-cart.schema'
 import { ShoppingCartController } from './shopping-cart.controller'
 import { ShoppingCartRepository } from './shopping-cart.repository'
-import { UserCartService } from './shopping-cart.service'
-
+import { ShoppingCartService } from './shopping-cart.service'
 import { ProductModule } from 'apps/product/src/product.module'
-import { InventoryModule } from 'apps/inventory/src/inventory.module'
-import { DatabaseModule } from '@app/database'
-import { I18nModule } from '@app/i18n'
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			envFilePath: 'apps/shopping-cart/.env'
+		}),
 		DatabaseModule,
+		RmqModule,
+		AuthModule,
 		I18nModule,
-		MongooseModule.forFeature([{ name: UserCartModelSchema.name, schema: UserCartSchema }]),
 		ProductModule,
-		InventoryModule
+		// InventoryModule,
+		MongooseModule.forFeature([{ name: UserCartModelSchema.name, schema: UserCartSchema }])
 	],
 	providers: [
-		UserCartService,
-		{ provide: ShoppingCartRepository.provide, useClass: ShoppingCartRepository }
+		ShoppingCartService,
+		{
+			provide: ShoppingCartRepository.provide,
+			useClass: ShoppingCartRepository
+		}
 	],
 	controllers: [ShoppingCartController],
 	exports: [
-		UserCartService,
-		{ provide: ShoppingCartRepository.provide, useClass: ShoppingCartRepository }
+		ShoppingCartService,
+		{
+			provide: ShoppingCartRepository.provide,
+			useClass: ShoppingCartRepository
+		}
 	]
 })
 export class ShoppingCartModule {}

@@ -1,5 +1,3 @@
-import { Collections } from '@app/common'
-import { Repositories } from '@app/common'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import * as mongoosePaginate from 'mongoose-paginate-v2'
@@ -9,7 +7,7 @@ import { DiscountService } from './discount.service'
 import { DiscountModelSchema, DiscountSchema } from './schemas/discount.schema'
 import { isNil } from 'lodash'
 import { DiscountApplyingMethod } from './constants/discount.contant'
-import { DatabaseModule } from '@app/common'
+import { DatabaseModule } from '@app/database'
 
 @Module({
 	imports: [
@@ -17,7 +15,6 @@ import { DatabaseModule } from '@app/common'
 		MongooseModule.forFeatureAsync([
 			{
 				name: DiscountModelSchema.name,
-				collection: Collections.DISCOUNTS,
 				useFactory: () => {
 					const schema = DiscountSchema
 					DiscountSchema.pre('save', function () {
@@ -31,7 +28,10 @@ import { DatabaseModule } from '@app/common'
 			}
 		])
 	],
-	providers: [DiscountService, { provide: Repositories.DISCOUNT, useClass: DiscountRepository }],
+	providers: [
+		DiscountService,
+		{ provide: DiscountRepository.provide, useClass: DiscountRepository }
+	],
 	controllers: [DiscountController]
 })
 export class DiscountModule {}

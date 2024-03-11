@@ -39,7 +39,13 @@ export class Product extends BaseAbstractSchema {
 	@Prop({ type: String, unique: true, default: Date.now().toString() })
 	sku: string
 
-	@Prop({ type: String, slug: 'product_name', unique: true, index: true })
+	@Prop({
+		type: String,
+		slug: 'product_name',
+		unique: true,
+		index: true,
+		slugOn: { save: true, findOneAndUpdate: true, updateOne: true }
+	})
 	slug: string
 
 	@Prop({ type: String, required: true, trim: true })
@@ -55,18 +61,18 @@ export class Product extends BaseAbstractSchema {
 	is_published: boolean // created product that published to store
 
 	@Prop({
-		type: mongoose.Schema.Types.ObjectId,
+		type: mongoose.Types.ObjectId,
 		ref: 'ProductCollection',
 		index: true
 	})
-	collection: mongoose.Types.ObjectId | ProductCollectionDocument
+	collection: mongoose.Types.ObjectId
 
 	@Prop({
-		type: mongoose.Schema.Types.ObjectId,
+		type: mongoose.Types.ObjectId,
 		ref: 'ProductLine',
 		index: true
 	})
-	product_line: mongoose.Types.ObjectId | ProductLineDocument
+	product_line: mongoose.Types.ObjectId
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product)

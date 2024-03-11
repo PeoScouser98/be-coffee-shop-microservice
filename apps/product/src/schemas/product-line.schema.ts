@@ -6,15 +6,23 @@ import { IProductLine } from '../interfaces/product-line.interface'
 export type ProductLineDocument = HydratedDocument<IProductLine>
 
 const COLLECTION_NAME = 'product_lines' as const
+
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class ProductLine extends BaseAbstractSchema {
 	@Prop({ type: String, required: true, trim: true })
 	name: string
 
-	@Prop({ type: String, slug: 'name', trim: true, lowercase: true })
+	@Prop({
+		type: String,
+		slug: 'name',
+		trim: true,
+		lowercase: true,
+		unique: true,
+		slugOn: { save: true, findOneAndUpdate: true }
+	})
 	slug: string
 }
 

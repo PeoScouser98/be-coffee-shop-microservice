@@ -1,4 +1,3 @@
-import { Collections } from '@app/common'
 import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
@@ -7,7 +6,10 @@ import { DiscountApplyingMethod, DiscountTypeEnum } from '../constants/discount.
 import { Product } from 'apps/product/src/schemas/product.schema'
 
 export type DiscountDocument = HydratedDocument<IDiscount>
-@Schema({ collection: Collections.DISCOUNTS, ...getDefaultSchemaOptions })
+
+const COLLECTION_NAME = 'discount'
+
+@Schema({ collection: COLLECTION_NAME, ...getDefaultSchemaOptions() })
 export class DiscountModelSchema extends BaseAbstractSchema {
 	// Tên chương trình giảm giá
 	@Prop({ type: Object, required: true, trim: true })

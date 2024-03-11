@@ -47,12 +47,10 @@ export abstract class BaseAbstractRepository<T extends BaseAbstractSchema>
 	}
 
 	async updateOneById(id: string | Types.ObjectId, update, options?: QueryOptions): Promise<T> {
-		return await this.model
-			.findByIdAndUpdate(id, { $set: update }, { new: true, ...options })
-			.exec()
+		return await this.model.findByIdAndUpdate(id, { $set: update }, { new: true, ...options })
 	}
 
 	async deleteOneById(id: string | Types.ObjectId): Promise<any> {
-		return await this.model.findByIdAndDelete(id).exec()
+		return await this.model.findByIdAndDelete(id)
 	}
 }

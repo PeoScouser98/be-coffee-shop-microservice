@@ -13,10 +13,9 @@ const COLLECTION_NAME = 'user_tokens' as const
 export class UserToken extends BaseAbstractSchema {
 	@Prop({
 		type: mongoose.Types.ObjectId,
-		required: true,
-		transform: (value) => value.toString()
+		required: true
 	})
-	user: string
+	user: mongoose.Types.ObjectId
 
 	@Prop({
 		type: String,

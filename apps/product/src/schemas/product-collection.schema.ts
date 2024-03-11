@@ -7,9 +7,10 @@ import { IProductCollection } from '../interfaces/product-collection.interface'
 export type ProductCollectionDocument = HydratedDocument<IProductCollection>
 
 const COLLECTION_NAME = 'product_collections' as const
+
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class ProductCollection extends BaseAbstractSchema {
 	@Prop({
@@ -26,7 +27,9 @@ export class ProductCollection extends BaseAbstractSchema {
 		trim: true,
 		index: true,
 		lowercase: true,
-		slug: 'name'
+		slug: 'name',
+		unique: true,
+		slugOn: { save: true, findOneAndUpdate: true }
 	})
 	slug: string
 

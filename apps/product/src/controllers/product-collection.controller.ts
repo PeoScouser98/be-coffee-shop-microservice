@@ -17,7 +17,7 @@ import {
 	UsePipes
 } from '@nestjs/common'
 
-import { ProductCollectionDTO, ProductCollectionValidator } from '../dto/product-collection.dto'
+import { ProductCollectionDTO, productCollectionValidator } from '../dto/product-collection.dto'
 import { ProductCollectionService } from '../services/product-collection.service'
 import { JwtGuard } from '@app/common'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
@@ -49,7 +49,7 @@ export class ProductCollectionController {
 	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(JwtGuard)
 	@Roles(UserRoles.ADMIN)
-	@UsePipes(new ZodValidationPipe(ProductCollectionValidator))
+	@UsePipes(new ZodValidationPipe(productCollectionValidator))
 	@UseFilters(AllExceptionsFilter)
 	async createProductCollection(@Body() payload: ProductCollectionDTO, @Res() res) {
 		const { data, error } = await this.productCollectionService.createProductCollection(payload)

@@ -10,4 +10,7 @@ export class Log {
 	static info(...args: any[]) {
 		console.log(chalk.bold('Info: '), ...args)
 	}
+	static highlight(...args: any[]) {
+		return chalk.bold.cyanBright(...args)
+	}
 }

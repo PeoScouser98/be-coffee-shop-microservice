@@ -19,7 +19,7 @@
 		"updating": "Failed to update product collection",
 		"deleting": "Failed to delete product collection"
 	},
-	"branch_store": {
+	"retail_store": {
 		"creating": "Failed to create store",
 		"updating": "Failed to update store",
 		"deleting": "Failed to delete store"

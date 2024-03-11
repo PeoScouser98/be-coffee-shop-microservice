@@ -5,6 +5,7 @@ import {
 	HttpCode,
 	HttpException,
 	HttpStatus,
+	ParseArrayPipe,
 	ParseIntPipe,
 	Query,
 	Res,
@@ -47,6 +48,7 @@ export class PostController {
 	public async getPublishedPosts(
 		@Query('page', new ParseIntPipe(), new DefaultValuePipe(1)) page: number,
 		@Query('limit', new ParseIntPipe(), new DefaultValuePipe(20)) limit: number,
+		@Query('sort', new ParseArrayPipe()) sort,
 		@Res() res: Response
 	) {
 		const { data, error } = await this.postService.getAllPublishedPosts({ page, limit })

@@ -17,7 +17,7 @@
 		"updating": "Lỗi cập nhật bộ sưu tập sản phẩm",
 		"deleting": "Lỗi xóa bộ sưu tập sản phẩm"
 	},
-	"branch_store": {
+	"retail_store": {
 		"creating": "Lỗi thêm cửa hàng",
 		"updating": "Lỗi cập nhật cửa hàng",
 		"deleting": "Lỗi xóa cửa hàng"

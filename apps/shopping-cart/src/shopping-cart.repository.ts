@@ -16,14 +16,14 @@ export class ShoppingCartRepository
 
 	constructor(
 		@InjectModel(UserCartModelSchema.name)
-		private readonly userCartModel: Model<ShoppingCartDocument>,
+		private readonly shoppingCartModel: Model<ShoppingCartDocument>,
 		@InjectConnection() connection: Connection
 	) {
-		super(userCartModel, connection)
+		super(shoppingCartModel, connection)
 	}
 
 	public async upsertCartItemByUser(user: string, product: ICartItem) {
-		return await this.userCartModel.findOneAndUpdate(
+		return await this.shoppingCartModel.findOneAndUpdate(
 			{ created_by: user, status: ShoppingCartStatus.ACTIVE },
 			{
 				$addToSet: { items: product }
@@ -32,19 +32,19 @@ export class ShoppingCartRepository
 		)
 	}
 	public async findOneByUser(user: string) {
-		return await this.userCartModel.findOne({ created_by: user })
+		return await this.shoppingCartModel.findOne({ created_by: user })
 	}
 
-	public async updateCartItemQuantity(user: string, productId: string, quantity: number) {
-		return await this.userCartModel.findOneAndUpdate(
-			{ created_by: user, 'items._id': productId },
+	public async updateCartItemQuantity(uid: string, productId: string, quantity: number) {
+		return await this.shoppingCartModel.findOneAndUpdate(
+			{ created_by: uid, 'items._id': productId },
 			{ 'items.$.quantity': quantity },
 			{ new: true }
 		)
 	}
 
 	public async deleteCartItem(user: string, productId: string) {
-		return await this.userCartModel.findOneAndUpdate(
+		return await this.shoppingCartModel.findOneAndUpdate(
 			{
 				created_by: user,
 				'items._id': productId
@@ -56,5 +56,9 @@ export class ShoppingCartRepository
 				new: true
 			}
 		)
+	}
+
+	public async deleteCartByUserId(uid: string) {
+		return await this.shoppingCartModel.deleteOne({ $or: [{ user: uid }, { sessionId: uid }] })
 	}
 }

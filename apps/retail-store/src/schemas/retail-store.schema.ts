@@ -1,4 +1,3 @@
-import { Collections } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { RetailStoreTypeEnum, Cities } from '../constants/retail-store.constant'
@@ -7,11 +6,13 @@ import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 
 export type RetailStoreDocument = HydratedDocument<IRetailStore>
 
+const COLLECTION_NAME = 'retail_stores' as const
+
 @Schema({
-	collection: Collections.BRANCH_STORES,
+	collection: COLLECTION_NAME,
 	...getDefaultSchemaOptions
 })
-export class RetailStoreModelSchema extends BaseAbstractSchema {
+export class RetailStore extends BaseAbstractSchema {
 	// Tên cửa hàng
 	@Prop({ type: String, required: true, trim: true })
 	name: string
@@ -57,4 +58,4 @@ export class RetailStoreModelSchema extends BaseAbstractSchema {
 	google_map_coordinate: Record<'latitude' | 'longtitude', number>
 }
 
-export const RetailStoreSchema = SchemaFactory.createForClass(RetailStoreModelSchema)
+export const RetailStoreSchema = SchemaFactory.createForClass(RetailStore)

@@ -1,4 +1,4 @@
-import { JwtGuard, LocalizationService, ZodValidationPipe } from '@app/common'
+import { JwtGuard, ZodValidationPipe } from '@app/common'
 import { Roles } from '@app/common/decorators/roles.decorator'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import { ResponseBody } from '@app/common'
@@ -17,16 +17,18 @@ import {
 	UseGuards,
 	UsePipes
 } from '@nestjs/common'
-import UserRoles from 'apps/auth/src/constants/user.constant'
+
 import { Response } from 'express'
 import { DiscountService } from './discount.service'
 import { DiscountDTO, DiscountValidator } from './dto/discount.dto'
+import { I18nService } from '@app/i18n'
+import { UserRoles } from 'apps/auth/src/constants/user.constant'
 
 @Controller('discount')
 export class DiscountController {
 	constructor(
 		private readonly discountService: DiscountService,
-		private readonly localizationService: LocalizationService
+		private readonly localizationService: I18nService
 	) {}
 
 	@Post()

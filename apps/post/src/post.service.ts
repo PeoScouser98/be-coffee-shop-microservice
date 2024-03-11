@@ -11,7 +11,7 @@ import { User } from 'apps/auth/src/schemas/user.schema'
 @Injectable()
 export class PostService {
 	constructor(
-		@Inject() private readonly postRepository: PostRepository,
+		@Inject(PostRepository.provide) private readonly postRepository: PostRepository,
 		private readonly i18nService: I18nService
 	) {}
 

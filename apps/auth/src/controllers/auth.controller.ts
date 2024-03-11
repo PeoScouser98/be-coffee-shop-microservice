@@ -59,7 +59,7 @@ export class AuthController {
 			privateKey: privateKey
 		})
 		await this.userTokenService.upsertUserToken({
-			user: String(user?._id),
+			user: String(user._id),
 			public_key: publicKey,
 			private_key: privateKey,
 			refresh_token: refreshToken,

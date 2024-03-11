@@ -30,10 +30,10 @@ export class ProductCollectionService {
 	}
 
 	async updateProductCollection(id: string, payload: Partial<ProductCollectionDTO>) {
-		const updatedProductCollection = await this.productCollectionRepository.updateOneById(
-			id,
-			payload
-		)
+		const updatedProductCollection = await (
+			await this.productCollectionRepository.updateOneById(id, payload)
+		).save()
+
 		if (!Boolean(updatedProductCollection))
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product_collection.updating'),

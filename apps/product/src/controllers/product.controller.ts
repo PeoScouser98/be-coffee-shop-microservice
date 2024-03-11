@@ -3,6 +3,7 @@ import {
 	Body,
 	Controller,
 	DefaultValuePipe,
+	Delete,
 	Get,
 	HttpCode,
 	HttpException,
@@ -25,9 +26,10 @@ import { Roles } from '@app/common/decorators/roles.decorator'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import { UserRoles } from 'apps/auth/src/constants/user.constant'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
-import { ProductDTO, ProductValidator } from '../dto/product.dto'
+import { ProductDTO, productValidator } from '../dto/product.dto'
 import { ProductService } from '../services/product.service'
 import { I18nService } from '@app/i18n'
+import { ParseObjectId } from '@app/common/pipes/object-id.pipe'
 
 @Controller('products')
 export class ProductController {
@@ -121,7 +123,7 @@ export class ProductController {
 	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(JwtGuard)
 	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
-	@UsePipes(new ZodValidationPipe(ProductValidator))
+	@UsePipes(new ZodValidationPipe(productValidator))
 	@UseFilters(AllExceptionsFilter)
 	public async createProduct(@Body() payload: ProductDTO, @Res() res: Response) {
 		const { data, error } = await this.productService.createProduct(payload)
@@ -162,6 +164,17 @@ export class ProductController {
 			this.i18nService.t('success_messages.product.updated')
 		)
 		return res.json(responseBody)
+	}
+
+	@Delete(':id')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@UseGuards(JwtGuard)
+	@Roles(UserRoles.ADMIN)
+	@UseFilters(AllExceptionsFilter)
+	public async deleteProduct(@Param('id', new ParseObjectId()) id: string, @Res() res: Response) {
+		const { data, error } = await this.productService.deleteProduct(id)
+		if (error) throw new HttpException(error, error.errorCode)
+		return res.json(data)
 	}
 
 	@Patch(':id/publish')

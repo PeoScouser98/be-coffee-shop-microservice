@@ -9,7 +9,7 @@ export * from './guard/roles.guard'
 
 // Decorators
 export * from './decorators/roles.decorator'
-export * from './decorators/user.decorator'
+export * from './decorators/current-user.decorator'
 export * from './pipes/zod-validation.pipe'
 
 // Exceptions

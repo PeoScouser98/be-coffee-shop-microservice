@@ -16,7 +16,7 @@
 		"updated": "Updated product collection",
 		"deleted": "Deleted product collection"
 	},
-	"branch_store": {
+	"retail_store": {
 		"creating": "Created store",
 		"updating": "Updated store",
 		"deleting": "Deleted store"

@@ -20,6 +20,7 @@ export declare interface IProduct {
 	status: ProductStatus
 	sku: string
 	slug: string
+	thumbnail: string
 	gallery_images: Array<string>
 	attributes?: Record<string, any>
 	collection: mongoose.Types.ObjectId | ProductCollectionDocument

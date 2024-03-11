@@ -7,7 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { AuthModule } from 'apps/auth/src/auth.module'
 import mongooseAutoPopulate from 'mongoose-autopopulate'
 import * as mongoosePaginate from 'mongoose-paginate-v2'
-import * as mongooseSlugGenerator from 'mongoose-slug-generator'
+import mongooseSlugUpdater from 'mongoose-slug-updater'
 import { PostController } from './post.controller'
 import { PostRepository } from './post.repository'
 import { PostService } from './post.service'
@@ -17,7 +17,7 @@ import { Post, PostSchema } from './schemas/post.schema'
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: 'apps/post/.env'
+			envFilePath: '/apps/post/.env'
 		}),
 		DatabaseModule,
 		RmqModule,
@@ -30,7 +30,7 @@ import { Post, PostSchema } from './schemas/post.schema'
 					const schema = PostSchema
 					schema.plugin(mongooseAutoPopulate)
 					schema.plugin(mongoosePaginate)
-					schema.plugin(mongooseSlugGenerator)
+					schema.plugin(mongooseSlugUpdater)
 					return schema
 				}
 			}

@@ -27,7 +27,6 @@ module.exports = function (options, webpack) {
 				allowlist: ['webpack/hot/poll?100']
 			})
 		],
-
 		plugins: [
 			...options.plugins,
 			new webpack.HotModuleReplacementPlugin(),
@@ -41,7 +40,12 @@ module.exports = function (options, webpack) {
 			new TsconfigPathsPlugin({
 				baseUrl: path.resolve(__dirname, '.')
 			}),
-			new CopyWebpackPlugin({ patterns: [{ from: 'i18n', to: 'i18n' }] })
+			new CopyWebpackPlugin({
+				patterns: [
+					{ from: 'locales', to: 'locales' },
+					{ from: 'templates', to: 'templates' }
+				]
+			})
 		]
 	}
 }

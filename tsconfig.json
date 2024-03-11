@@ -33,6 +33,6 @@
 			"@app/mailer": ["libs/mailer/src"],
 			"@app/mailer/*": ["libs/mailer/src/*"]
 		},
-		"typeRoots": ["./node_modules/@types", "./src/types"]
+		"typeRoots": ["./node_modules/@types"]
 	}
 }

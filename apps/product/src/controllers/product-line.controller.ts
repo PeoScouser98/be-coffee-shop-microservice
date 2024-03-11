@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 
-import { ProductLineDTO, ProductLineValidator } from '../dto/product-line.dto'
+import { ProductLineDTO, productLineValidator } from '../dto/product-line.dto'
 import { ProductLineService } from '../services/product-line.service'
 import { JwtGuard } from '@app/common'
 import { ZodValidationPipe } from '@app/common'
@@ -48,7 +48,7 @@ export class ProductLineController {
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(JwtGuard)
-	@UsePipes(new ZodValidationPipe(ProductLineValidator))
+	@UsePipes(new ZodValidationPipe(productLineValidator))
 	@Roles(UserRoles.ADMIN)
 	@UseFilters(AllExceptionsFilter)
 	async createProductLine(@Body() payload: ProductLineDTO, @Res() res: Response) {

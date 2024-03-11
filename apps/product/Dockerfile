@@ -1,4 +1,4 @@
-FROM node:alpine AS development
+FROM node AS development
 
 WORKDIR /usr/src/app
 
@@ -8,11 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build product
 
-FROM node:alpine AS production
-
-EXPOSE 3002
+FROM node AS production
 
 ARG NODE_ENV=production
 
@@ -29,4 +27,5 @@ COPY . .
 COPY --from=developement /usr/src/app/dist ./dist
 
 CMD ["node", "dist/apps/product/main"]
+
 

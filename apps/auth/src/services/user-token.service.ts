@@ -1,6 +1,6 @@
 import { ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { isValidObjectId } from 'mongoose'
+import mongoose, { isValidObjectId } from 'mongoose'
 import { UserTokenDTO } from '../dto/user-token.dto'
 import { UserTokenRepository } from '../repositories/user-token.repository'
 import { UserTokenDocument } from '../schemas/user-token.schema'
@@ -14,10 +14,14 @@ export class UserTokenService {
 		private readonly localizationService: I18nService
 	) {}
 	async upsertUserToken(payload: Partial<UserTokenDTO>) {
-		return await this.userTokenRepository.updateOneByUserId(payload.user, payload, {
-			new: true,
-			upsert: true
-		})
+		return await this.userTokenRepository.updateOneByUserId(
+			payload.user,
+			{ ...payload, user: new mongoose.Types.ObjectId(payload.user) },
+			{
+				new: true,
+				upsert: true
+			}
+		)
 	}
 
 	async getUserTokenByUserId(userId: string): Promise<ServiceResult<UserTokenDocument>> {

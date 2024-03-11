@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtService } from '@nestjs/jwt'
 import { UserTokenService } from 'apps/auth/src/services/user-token.service'
 import { Request } from 'express'
+import { Log } from '../helpers/log.helper'
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -14,22 +15,22 @@ export class JwtGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest()
 		const token = this.extractTokenFromHeader(request)
 		if (!token) {
-			throw new UnauthorizedException()
+			throw new UnauthorizedException('Access token is required')
 		}
 		try {
 			const { data, error } = await this.userTokenService.getUserTokenByUserId(
 				request.cookies.client_id
 			)
+			console.log(data.user)
 			if (!data) throw new UnauthorizedException(error)
-
 			const payload = await this.jwtService.verifyAsync(token, {
 				publicKey: data.public_key
 			})
-			// 💡 We're assigning the payload to the request object here
-			// so that we can access it in our route handlers
+			console.log(payload)
 			request.user = payload
-		} catch {
-			throw new UnauthorizedException()
+		} catch (e) {
+			Log.error(e.message)
+			throw new UnauthorizedException(e.message)
 		}
 		return true
 	}

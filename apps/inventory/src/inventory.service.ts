@@ -1,4 +1,3 @@
-import { Repositories } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InventoryDTO } from './dto/inventory.dto'
 import { IInventory } from './interfaces/inventory.interface'
@@ -6,13 +5,14 @@ import { InventoryRepository } from './inventory.repository'
 import { ServiceResult } from '@app/common'
 import { FilterQuery } from 'mongoose'
 import { InventoryDocument } from './schema/inventory.schema'
-import { LocalizationService } from '@app/common'
+import { I18nService } from '@app/i18n'
 
 @Injectable()
 export class InventoryService {
 	constructor(
-		@Inject(Repositories.INVENTORY) private readonly inventoryRepository: InventoryRepository,
-		private readonly localizationService: LocalizationService
+		@Inject(InventoryRepository.provide)
+		private readonly inventoryRepository: InventoryRepository,
+		private readonly i18nService: I18nService
 	) {}
 
 	public async createProductInventory(
@@ -21,7 +21,7 @@ export class InventoryService {
 		const createdProductInventory = await this.inventoryRepository.createOne(payload)
 		if (!createdProductInventory)
 			return new ServiceResult<null>(null, {
-				message: this.localizationService.t('error_messages.inventory.creating'),
+				message: this.i18nService.t('error_messages.inventory.creating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		return new ServiceResult(createdProductInventory)
@@ -34,7 +34,7 @@ export class InventoryService {
 		})
 		if (!productsInventory)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.inventory.not_found'),
+				message: this.i18nService.t('error_messages.inventory.not_found'),
 				errorCode: HttpStatus.NOT_FOUND
 			})
 		return new ServiceResult(productsInventory)
@@ -43,7 +43,7 @@ export class InventoryService {
 		const productInventory = await this.inventoryRepository.findOneByProductId(productId)
 		if (!productInventory)
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.inventory.product_not_found'),
+				message: this.i18nService.t('error_messages.inventory.product_not_found'),
 				errorCode: HttpStatus.NOT_FOUND
 			})
 		return new ServiceResult(productInventory)

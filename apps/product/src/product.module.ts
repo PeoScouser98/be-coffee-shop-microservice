@@ -1,3 +1,4 @@
+import { toCapitalize } from '@app/common/utils/string.util'
 import { DatabaseModule } from '@app/database'
 import { I18nModule } from '@app/i18n'
 import { RmqModule } from '@app/rmq'
@@ -5,9 +6,8 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AuthModule } from 'apps/auth/src/auth.module'
-import * as _ from 'lodash'
 import mongoosePaginate from 'mongoose-paginate-v2'
-import mongooseSlugGenerator from 'mongoose-slug-generator'
+import mongooseSlugUpdater from 'mongoose-slug-updater'
 import { ProductCollectionController } from './controllers/product-collection.controller'
 import { ProductLineController } from './controllers/product-line.controller'
 import { ProductController } from './controllers/product.controller'
@@ -45,10 +45,10 @@ import { ProductService } from './services/product.service'
 				useFactory: () => {
 					const schema = ProductSchema
 					schema.pre('save', function (next) {
-						this.name = _.capitalize(this.name)
+						this.name = toCapitalize(this.name)
 						next()
 					})
-					schema.plugin(mongooseSlugGenerator)
+					schema.plugin(mongooseSlugUpdater)
 					schema.plugin(mongoosePaginate)
 					return schema
 				}
@@ -70,10 +70,10 @@ import { ProductService } from './services/product.service'
 				useFactory: () => {
 					const schema = ProductCollectionSchema
 					schema.pre('save', function (next) {
-						this.name = _.capitalize(this.name)
+						this.name = toCapitalize(this.name)
 						next()
 					})
-					schema.plugin(mongooseSlugGenerator)
+					schema.plugin(mongooseSlugUpdater)
 					return schema
 				}
 			},
@@ -82,10 +82,10 @@ import { ProductService } from './services/product.service'
 				useFactory: () => {
 					const schema = ProductLineSchema
 					schema.pre('save', function (next) {
-						this.name = _.capitalize(this.name)
+						this.name = toCapitalize(this.name)
 						next()
 					})
-					schema.plugin(mongooseSlugGenerator)
+					schema.plugin(mongooseSlugUpdater)
 					return schema
 				}
 			}

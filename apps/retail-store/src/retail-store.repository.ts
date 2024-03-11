@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { RetailStoreModelSchema, type RetailStoreDocument } from './schemas/retail-store.schema'
+import { RetailStore, type RetailStoreDocument } from './schemas/retail-store.schema'
 import { IRetailChainRepository } from './interfaces/retail-store.repository.interface'
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
@@ -13,7 +13,7 @@ export class RetailStoreRepository
 	static provide: string = 'RETAIL_STORE_REPOSITORY' as const
 
 	constructor(
-		@InjectModel(RetailStoreModelSchema.name)
+		@InjectModel(RetailStore.name)
 		readonly branchStoreModel: Model<RetailStoreDocument>,
 		@InjectConnection() connection
 	) {

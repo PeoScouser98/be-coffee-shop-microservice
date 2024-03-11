@@ -10,11 +10,12 @@ import {
 import { ISneakerProduct } from '../interfaces/product.interface'
 
 export type SneakerProductDocument = HydratedDocument<ISneakerProduct>
+
 const COLLECTION_NAME = 'product_sneakers' as const
 
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class SneakerProduct extends BaseAbstractSchema {
 	@Prop({

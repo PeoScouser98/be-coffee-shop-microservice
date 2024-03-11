@@ -22,7 +22,8 @@ export class PostRepository
 	public async paginate(filterQuery: FilterQuery<PostDocument> = {}, options: PaginateOptions) {
 		const data = await this.postModel.paginate(filterQuery, {
 			page: options.page,
-			limit: options.limit
+			limit: options.limit,
+			...options
 		})
 		return data
 	}

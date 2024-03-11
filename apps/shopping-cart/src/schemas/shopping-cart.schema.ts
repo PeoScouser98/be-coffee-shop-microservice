@@ -23,8 +23,14 @@ export class UserCartModelSchema {
 	@Prop({ type: Number, required: true, min: 0, default: 0 })
 	items_count: number
 
-	@Prop({ type: mongoose.Types.ObjectId, required: true })
-	created_by: mongoose.Types.ObjectId
+	@Prop({ type: mongoose.Types.ObjectId, default: null })
+	user: mongoose.Types.ObjectId | null
+
+	@Prop({
+		type: String,
+		default: null
+	})
+	sessionId: string | null
 }
 
 export const UserCartSchema = SchemaFactory.createForClass(UserCartModelSchema)

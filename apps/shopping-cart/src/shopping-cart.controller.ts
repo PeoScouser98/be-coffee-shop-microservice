@@ -1,28 +1,36 @@
-import { JwtGuard } from '@app/common'
-import { Roles } from '@app/common/decorators/roles.decorator'
-import { CurrentUser } from '@app/common/decorators/user.decorator'
+import { CurrentUser } from '@app/common/decorators/current-user.decorator'
 import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
 import {
 	Body,
 	Controller,
+	Get,
 	HttpCode,
 	HttpStatus,
-	Patch,
+	Post,
 	Res,
-	UseFilters,
-	UseGuards
+	Session,
+	UseFilters
 } from '@nestjs/common'
-import { UserRoles } from 'apps/auth/src/constants/user.constant'
 import { Response } from 'express'
 
 @Controller('shopping-cart')
 export class ShoppingCartController {
-	@Patch(':userId')
+	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	@UseGuards(JwtGuard)
-	@Roles(UserRoles.CUSTOMER)
 	@UseFilters(AllExceptionsFilter)
-	public async upsertUserCart(@CurrentUser() user, @Body() payload, @Res() res: Response) {}
+	public async createShoppingCart(
+		@CurrentUser() user,
+		@Session() session,
+		@Body() payload,
+		@Res() res: Response
+	) {
+		return res.json(session)
+	}
 
-	public async deactivateUserCart() {}
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	@UseFilters(AllExceptionsFilter)
+	public async getShoppingCart(@Session() session, @Res() res: Response) {
+		return res.json(session.id)
+	}
 }

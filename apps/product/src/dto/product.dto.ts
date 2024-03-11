@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { z } from 'zod'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
 
-export const ProductValidator = z.object({
+export const productValidator = z.object({
 	name: z.string({ required_error: '"name" is required' }),
 	description: z.object({
 		vi: z.string(),
@@ -32,4 +32,4 @@ export const ProductValidator = z.object({
 		.default([])
 })
 
-export type ProductDTO = z.infer<typeof ProductValidator>
+export type ProductDTO = z.infer<typeof productValidator>

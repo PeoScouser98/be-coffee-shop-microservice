@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import {
-	I18nModule as NestI18nModule,
-	QueryResolver,
-	HeaderResolver,
+	AcceptLanguageResolver,
 	CookieResolver,
-	AcceptLanguageResolver
+	HeaderResolver,
+	I18nModule as NestI18nModule,
+	QueryResolver
 } from 'nestjs-i18n'
 import { I18nService } from './i18n.service'
 

@@ -26,7 +26,7 @@ rs.initiate(config, { force: true });
 exit;
 EOF
 
-MESSAGE="\n[Mongodb] ::: Replica set configuration is applied.\n"
+MESSAGE="\n[MongoDB] ::: Replica set configuration is applied.\n"
 
 echo -e "\033[32m$MESSAGE\033[0m"
 

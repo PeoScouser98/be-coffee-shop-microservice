@@ -16,17 +16,17 @@ export class RetailStoreService {
 		private readonly localizationService: I18nService
 	) {}
 
-	public async findBranchStores(filterQuery: FilterQuery<IRetailStore>) {
+	public async findRetailStore(filterQuery: FilterQuery<IRetailStore>) {
 		filterQuery = pick(flatten(filterQuery), ['city.slug', 'district.slug', 'type'])
 		const branchStores = await this.branchStoreRepository.findWithFilter(filterQuery)
 		return new ServiceResult(branchStores)
 	}
 
-	public async createBranchStore(payload: BranchStoreDTO) {
+	public async createRetailStore(payload: BranchStoreDTO) {
 		const newBranchStore = await this.branchStoreRepository.createOne(payload)
 		if (!newBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.branch_store.creating'),
+				message: this.localizationService.t('error_messages.retail_store.creating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}
@@ -37,7 +37,7 @@ export class RetailStoreService {
 		const updatedBranchStore = await this.branchStoreRepository.updateOneById(id, payload)
 		if (!updatedBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.branch_store.updating'),
+				message: this.localizationService.t('error_messages.retail_store.updating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}
@@ -47,7 +47,7 @@ export class RetailStoreService {
 		const deletedBranchStore = await this.branchStoreRepository.deleteOneById(id)
 		if (!deletedBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.branch_store.deleting'),
+				message: this.localizationService.t('error_messages.retail_store.deleting'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}

@@ -1,10 +1,4 @@
-import {
-	AllExceptionsFilter,
-	JwtGuard,
-	LocalizationService,
-	ResponseBody,
-	ZodValidationPipe
-} from '@app/common'
+import { AllExceptionsFilter, JwtGuard, ResponseBody, ZodValidationPipe } from '@app/common'
 import { Roles } from '@app/common/decorators/roles.decorator'
 import {
 	Body,
@@ -20,16 +14,17 @@ import {
 	UseGuards,
 	UsePipes
 } from '@nestjs/common'
-import UserRoles from 'apps/auth/src/constants/user.constant'
 import { Response } from 'express'
 import { InventoryDTO, InventoryValidator } from './dto/inventory.dto'
 import { InventoryService } from './inventory.service'
+import { UserRoles } from 'apps/auth/src/constants/user.constant'
+import { I18nService } from '@app/i18n'
 
 @Controller('inventories')
 export class InventoryController {
 	constructor(
 		private readonly inventoryService: InventoryService,
-		private readonly localizationService: LocalizationService
+		private readonly i18nService: I18nService
 	) {}
 
 	@Post()
@@ -44,7 +39,7 @@ export class InventoryController {
 		const responseBody = new ResponseBody(
 			data,
 			HttpStatus.CREATED,
-			this.localizationService.t('success_messages.inventory.created')
+			this.i18nService.t('success_messages.inventory.created')
 		)
 		return res.json(responseBody)
 	}
@@ -59,7 +54,7 @@ export class InventoryController {
 		const responseBody = new ResponseBody(
 			data,
 			HttpStatus.CREATED,
-			this.localizationService.t('success_messages.ok')
+			this.i18nService.t('success_messages.ok')
 		)
 		return res.json(responseBody)
 	}
