@@ -21,12 +21,11 @@ export class JwtGuard implements CanActivate {
 			const { data, error } = await this.userTokenService.getUserTokenByUserId(
 				request.cookies.client_id
 			)
-			console.log(data.user)
-			if (!data) throw new UnauthorizedException(error)
-			const payload = await this.jwtService.verifyAsync(token, {
-				publicKey: data.public_key
+			if (error) throw new UnauthorizedException(error.message)
+			const publicKey = Buffer.from(data.public_key)
+			const payload = this.jwtService.verify(token, {
+				publicKey
 			})
-			console.log(payload)
 			request.user = payload
 		} catch (e) {
 			Log.error(e.message)

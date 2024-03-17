@@ -14,7 +14,7 @@ import { I18nService } from './i18n.service'
 			useFactory: () => ({
 				fallbackLanguage: 'vi',
 				loaderOptions: {
-					path: 'locales',
+					path: 'resources/locales',
 					watch: true
 				}
 			}),

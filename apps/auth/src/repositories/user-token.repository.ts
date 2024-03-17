@@ -34,7 +34,9 @@ export class UserTokenRepository
 	}
 
 	async deleteByUserId(userId: string) {
-		return await this.userTokenModel.deleteOne({ user: userId }).exec()
+		return await this.userTokenModel.findOneAndDelete({
+			user: new mongoose.Types.ObjectId(userId)
+		})
 	}
 
 	async updateOneByUserId(

@@ -29,7 +29,7 @@ export class InventoryService {
 	public async getAllProductInventory(
 		filterQuery: FilterQuery<InventoryDocument> = {}
 	): Promise<ServiceResult<InventoryDocument[]>> {
-		const productsInventory = await this.inventoryRepository.findWithFilter(filterQuery, {
+		const productsInventory = await this.inventoryRepository.find(filterQuery, {
 			populate: { path: 'product' }
 		})
 		if (!productsInventory)

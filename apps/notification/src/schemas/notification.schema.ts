@@ -1,4 +1,4 @@
-import { BaseAbstractRepository, BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { NotificationType } from '../constants/notification.constant'
 import mongoose from 'mongoose'

@@ -4,7 +4,7 @@ import { flatten } from 'flat'
 import { pick } from 'lodash'
 import { FilterQuery } from 'mongoose'
 import { RetailStoreRepository } from './retail-store.repository'
-import { BranchStoreDTO } from './dto/retail-store.dto'
+import { RetailStoreDTO } from './dto/retail-store.dto'
 import { IRetailStore } from './interfaces/retail-store.interface'
 import { I18nService } from '@app/i18n'
 
@@ -12,42 +12,47 @@ import { I18nService } from '@app/i18n'
 export class RetailStoreService {
 	constructor(
 		@Inject(RetailStoreRepository.provide)
-		private readonly branchStoreRepository: RetailStoreRepository,
-		private readonly localizationService: I18nService
+		private readonly retailStoreRepository: RetailStoreRepository,
+		private readonly i18nService: I18nService
 	) {}
+
+	public async getAllRetailStore() {
+		return this.retailStoreRepository.all()
+	}
 
 	public async findRetailStore(filterQuery: FilterQuery<IRetailStore>) {
 		filterQuery = pick(flatten(filterQuery), ['city.slug', 'district.slug', 'type'])
-		const branchStores = await this.branchStoreRepository.findWithFilter(filterQuery)
+		const branchStores = await this.retailStoreRepository.find(filterQuery)
 		return new ServiceResult(branchStores)
 	}
 
-	public async createRetailStore(payload: BranchStoreDTO) {
-		const newBranchStore = await this.branchStoreRepository.createOne(payload)
+	public async createRetailStore(payload: RetailStoreDTO) {
+		const newBranchStore = await this.retailStoreRepository.createOne(payload)
 		if (!newBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.retail_store.creating'),
+				message: this.i18nService.t('error_messages.retail_store.creating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}
 		return new ServiceResult(newBranchStore)
 	}
 
-	public async updateBranchStore(id: string, payload: Partial<IRetailStore>) {
-		const updatedBranchStore = await this.branchStoreRepository.updateOneById(id, payload)
+	public async updateRetailStore(id: string, payload: Partial<RetailStoreDTO>) {
+		const updatedBranchStore = await this.retailStoreRepository.updateOneById(id, payload)
 		if (!updatedBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.retail_store.updating'),
+				message: this.i18nService.t('error_messages.retail_store.updating'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}
 		return new ServiceResult(updatedBranchStore)
 	}
-	public async deleteBranchStore(id: string) {
-		const deletedBranchStore = await this.branchStoreRepository.deleteOneById(id)
+
+	public async deleteRetailStore(id: string) {
+		const deletedBranchStore = await this.retailStoreRepository.deleteOneById(id)
 		if (!deletedBranchStore) {
 			return new ServiceResult(null, {
-				message: this.localizationService.t('error_messages.retail_store.deleting'),
+				message: this.i18nService.t('error_messages.retail_store.deleting'),
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 		}

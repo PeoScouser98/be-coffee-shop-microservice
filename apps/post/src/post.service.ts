@@ -67,7 +67,7 @@ export class PostService {
 	}
 
 	public async getAllDraftPosts() {
-		const draftPosts = await this.postRepository.findWithFilter({ is_draft: true })
+		const draftPosts = await this.postRepository.find({ is_draft: true })
 		return new ServiceResult(draftPosts)
 	}
 

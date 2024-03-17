@@ -10,6 +10,7 @@ import { AccessoryProduct, AccessoryProductDocument } from '../schemas/accessory
 import { ProductDocument, Product } from '../schemas/product.schema'
 import { SneakerProductDocument, SneakerProduct } from '../schemas/sneaker-product.schema'
 import { TopHalfProduct } from '../schemas/top-half-product.schema'
+import { ProductCollection } from '../schemas/product-collection.schema'
 
 export class ProductRepository
 	extends BaseAbstractRepository<ProductDocument>
@@ -24,7 +25,19 @@ export class ProductRepository
 		super(productModel, connection)
 	}
 	public async paginate(filter: FilterQuery<ProductDocument>, options: PaginateOptions) {
-		return await this.productModel.paginate(filter, options)
+		return await this.productModel.paginate(filter, {
+			populate: [
+				{
+					path: 'collection',
+					strictPopulate: false
+				},
+				{
+					path: 'product_line',
+					strictPopulate: false
+				}
+			],
+			...options
+		})
 	}
 	public async findOneBySlug(slug: string, filter?: FilterQuery<ProductDocument>) {
 		return await this.productModel.findOne({ slug: slug, ...filter })

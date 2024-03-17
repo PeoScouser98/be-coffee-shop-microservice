@@ -147,14 +147,17 @@ export class ProductService {
 				...options,
 				populate: [
 					{
-						path: ProductCollection.name
+						path: 'collection',
+						strictPopulate: false
 					},
 					{
-						path: ProductLine.name
+						path: 'product_line',
+						strictPopulate: false
 					}
 				]
 			}
 		)
+
 		return new ServiceResult(products)
 	}
 
@@ -224,19 +227,7 @@ export class ProductService {
 			{ is_draft: true },
 			{
 				page: paginateOptions.page,
-				limit: paginateOptions.limit,
-				populate: [
-					{
-						path: ProductCollection.name,
-						localField: 'collection',
-						foreignField: '_id'
-					},
-					{
-						path: ProductLine.name,
-						localField: 'product_line',
-						foreignField: '_id'
-					}
-				]
+				limit: paginateOptions.limit
 			}
 		)
 

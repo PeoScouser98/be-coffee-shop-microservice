@@ -8,15 +8,18 @@ import { RETAIL_STORE_COLLECTION } from './constants/retail-store.constant'
 import { RetailStore, RetailStoreSchema } from './schemas/retail-store.schema'
 import { DatabaseModule } from '@app/database'
 import { RmqModule } from '@app/rmq'
+import { AuthModule } from 'apps/auth/src/auth.module'
+import { I18nModule } from '@app/i18n'
 
 @Module({
 	imports: [
 		DatabaseModule,
 		RmqModule,
+		AuthModule,
+		I18nModule,
 		MongooseModule.forFeatureAsync([
 			{
 				name: RetailStore.name,
-				collection: RETAIL_STORE_COLLECTION,
 				useFactory: () => {
 					const schema = RetailStoreSchema
 					schema.plugin(mongooseSlugUpdater)

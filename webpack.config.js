@@ -42,8 +42,8 @@ module.exports = function (options, webpack) {
 			}),
 			new CopyWebpackPlugin({
 				patterns: [
-					{ from: 'locales', to: 'locales' },
-					{ from: 'templates', to: 'templates' }
+					{ from: 'resources/locales', to: 'resources/locales' },
+					{ from: 'resources/templates', to: 'resources/templates' }
 				]
 			})
 		]

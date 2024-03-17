@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
-import { RetailStoreTypeEnum, Cities } from '../constants/retail-store.constant'
+import { RetailStoreTypeEnum, Areas } from '../constants/retail-store.constant'
 import { IRetailStore } from '../interfaces/retail-store.interface'
 import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 
@@ -10,7 +10,7 @@ const COLLECTION_NAME = 'retail_stores' as const
 
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class RetailStore extends BaseAbstractSchema {
 	// Tên cửa hàng
@@ -21,7 +21,7 @@ export class RetailStore extends BaseAbstractSchema {
 	slug: string
 
 	// Khu vực tỉnh thành
-	@Prop({ type: String, required: true, trim: true, enum: Cities })
+	@Prop({ type: String, required: true, trim: true, enum: Areas })
 	area: string
 
 	// Địa chỉ chi tiết ({apartment_num}/{street_name}/{district_name})
@@ -40,7 +40,7 @@ export class RetailStore extends BaseAbstractSchema {
 		index: true,
 		enum: Object.values(RetailStoreTypeEnum)
 	})
-	store_type: RetailStoreTypeEnum
+	type: RetailStoreTypeEnum
 
 	// Thời gian mở cửa
 	@Prop({ type: String, required: true, trim: true, lowercase: true })

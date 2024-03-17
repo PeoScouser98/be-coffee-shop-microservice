@@ -24,7 +24,7 @@ async function bootstrap() {
 	await app.startAllMicroservices()
 	await app.listen(PORT, async () => {
 		const url = await app.getUrl()
-		Log.info(`Product service is running on: ${url}`)
+		Log.info(`Product service is running on: ${Log.highlight(url)}`)
 	})
 	if (module.hot) {
 		module.hot.accept()

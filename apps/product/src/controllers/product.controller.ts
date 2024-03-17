@@ -58,12 +58,12 @@ export class ProductController {
 		@Res() res: Response
 	) {
 		const filterQuery = _.pick(req.query, ['type', 'status', 'collection', 'productLine'])
-		const products = await this.productService.getAllPublisedProducts(filterQuery, {
+		const { data, error } = await this.productService.getAllPublisedProducts(filterQuery, {
 			page,
 			limit
 		})
 		const responseBody = new ResponseBody(
-			products,
+			data,
 			HttpStatus.OK,
 			this.i18nService.t('success_messages.ok')
 		)
@@ -91,8 +91,8 @@ export class ProductController {
 
 	@Get('draft')
 	@HttpCode(HttpStatus.OK)
-	@Roles(UserRoles.ADMIN, UserRoles.MANAGER, UserRoles.STAFF)
 	@UseGuards(JwtGuard)
+	@Roles(UserRoles.ADMIN, UserRoles.MANAGER, UserRoles.STAFF)
 	@UseFilters(AllExceptionsFilter)
 	public async getAllDraftProducts(
 		@Query(

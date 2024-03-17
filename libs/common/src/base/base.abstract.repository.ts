@@ -19,14 +19,14 @@ export abstract class BaseAbstractRepository<T extends BaseAbstractSchema>
 		session.startTransaction()
 		return session
 	}
-	async findAll() {
-		return await this.model.find().lean()
+	async all() {
+		return await this.model.find()
 	}
 	async createOne(payload): Promise<T> {
 		return (await new this.model(payload).save()) as T
 	}
 
-	async findWithFilter(
+	async find(
 		filter: FilterQuery<T> = {},
 		projection?: ProjectionType<T>,
 		options?: QueryOptions<T>
@@ -47,10 +47,10 @@ export abstract class BaseAbstractRepository<T extends BaseAbstractSchema>
 	}
 
 	async updateOneById(id: string | Types.ObjectId, update, options?: QueryOptions): Promise<T> {
-		return await this.model.findByIdAndUpdate(id, { $set: update }, { new: true, ...options })
+		return await this.model.findOneAndUpdate({ _id: id }, update, { new: true, ...options })
 	}
 
 	async deleteOneById(id: string | Types.ObjectId): Promise<any> {
-		return await this.model.findByIdAndDelete(id)
+		return await this.model.findOneAndDelete({ _id: id })
 	}
 }

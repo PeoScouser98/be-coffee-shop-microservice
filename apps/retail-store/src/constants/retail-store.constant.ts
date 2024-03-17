@@ -14,7 +14,7 @@ export enum RetailStoreTypeEnum {
 	STANDARD = 'Standard'
 }
 
-export const Cities = [
+export const Areas = [
 	'An Giang',
 	'Bà Rịa - Vũng Tàu',
 	'Bắc Giang',

@@ -28,6 +28,7 @@ import { TopHalfProduct, TopHalfProductSchema } from './schemas/top-half-product
 import { ProductCollectionService } from './services/product-collection.service'
 import { ProductLineService } from './services/product-line.service'
 import { ProductService } from './services/product.service'
+import mongooseAutoPopulate from 'mongoose-autopopulate'
 
 @Module({
 	imports: [
@@ -37,7 +38,7 @@ import { ProductService } from './services/product.service'
 		}),
 		DatabaseModule,
 		RmqModule,
-		AuthModule,
+		{ module: AuthModule, global: true },
 		I18nModule,
 		MongooseModule.forFeatureAsync([
 			{
@@ -50,6 +51,7 @@ import { ProductService } from './services/product.service'
 					})
 					schema.plugin(mongooseSlugUpdater)
 					schema.plugin(mongoosePaginate)
+					schema.plugin(mongooseAutoPopulate)
 					return schema
 				}
 			},

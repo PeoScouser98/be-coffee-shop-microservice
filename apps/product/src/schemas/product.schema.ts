@@ -3,9 +3,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose, { HydratedDocument } from 'mongoose'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
 import { IProduct } from '../interfaces/product.interface'
-import { ProductCollectionDocument } from 'apps/product/src/schemas/product-collection.schema'
-import { ProductLineDocument } from 'apps/product/src/schemas/product-line.schema'
 import { Locale } from '@app/i18n'
+import { ProductCollection } from './product-collection.schema'
+import { ProductLine } from './product-line.schema'
 
 export type ProductDocument = HydratedDocument<IProduct>
 
@@ -13,7 +13,7 @@ const COLLECTION_NAME = 'products' as const
 
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions
+	...getDefaultSchemaOptions()
 })
 export class Product extends BaseAbstractSchema {
 	@Prop({ type: String, required: true, trim: true })
@@ -62,14 +62,15 @@ export class Product extends BaseAbstractSchema {
 
 	@Prop({
 		type: mongoose.Types.ObjectId,
-		ref: 'ProductCollection',
+		ref: ProductCollection.name,
+		// autopopulate: true,
 		index: true
 	})
 	collection: mongoose.Types.ObjectId
 
 	@Prop({
 		type: mongoose.Types.ObjectId,
-		ref: 'ProductLine',
+		ref: ProductLine.name,
 		index: true
 	})
 	product_line: mongoose.Types.ObjectId

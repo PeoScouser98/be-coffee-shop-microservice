@@ -50,12 +50,13 @@ export class AuthController {
 	@UseFilters(AllExceptionsFilter)
 	async login(@CurrentUser() user: IUser, @Res() res: Response) {
 		// Delete stored user key tokens of previous signin session if exists
-		await this.userTokenService.deleteUserTokenByUserId(String(user?._id))
+
+		await this.userTokenService.deleteUserTokenByUserId(user._id.toString())
 		// Create new public and private key pair
 		const { privateKey, publicKey } = this.authService.generateKeyPair()
 		// Generate new access and refresh tokens
 		const { accessToken, refreshToken } = await this.authService.generateTokenPair({
-			payload: { _id: String(user?._id), email: user?.email },
+			payload: { _id: String(user._id), email: user.email },
 			privateKey: privateKey
 		})
 		await this.userTokenService.upsertUserToken({
@@ -71,7 +72,7 @@ export class AuthController {
 			this.i18nService.t('success_messages.auth.logged_in')
 		)
 		return res
-			.cookie('client_id', user?._id, {
+			.cookie('client_id', user._id, {
 				maxAge: 60 * 60 * 24 * 7,
 				httpOnly: true,
 				secure: true,

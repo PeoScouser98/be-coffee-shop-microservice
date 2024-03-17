@@ -6,6 +6,7 @@ export declare interface IRetailStore {
 	address: string
 	hotline: string
 	open_time: string
-	store_type: RetailStoreTypeEnum
+	close_time: string
+	type: RetailStoreTypeEnum
 	google_map_coordinate: Record<'latitude' | 'longtitude', number>
 }

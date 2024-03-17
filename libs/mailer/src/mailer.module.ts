@@ -27,7 +27,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 						from: `Ananas <${configService.get<string>('MAILER_AUTH_USER')}>`
 					},
 					template: {
-						dir: process.cwd() + '/templates/',
+						dir: process.cwd() + '/resources/templates/',
 						adapter: new HandlebarsAdapter(),
 						options: {
 							strict: true

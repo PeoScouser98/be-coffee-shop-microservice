@@ -45,7 +45,7 @@ export class OrderService {
 	}
 
 	public async getOrderByCustomerEmail(customerEmail: string) {
-		const customerPurchasedOrders = await this.purchaseOrderRepository.findWithFilter({
+		const customerPurchasedOrders = await this.purchaseOrderRepository.find({
 			customer_email: customerEmail
 		})
 
