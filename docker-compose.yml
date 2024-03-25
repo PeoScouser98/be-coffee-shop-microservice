@@ -1,0 +1,269 @@
+services:
+   # #######################################################################
+   #                         RESTful APIs applications
+   # #######################################################################
+
+   # auth:
+   #    container_name: api-auth
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/auth/Dockerfile
+   #       target: development
+   #    command: npm run start:dev auth
+   #    develop:
+   #       watch:
+   #          - action: sync
+   #            path: ./apps/auth
+   #            target: /app/src
+   #            ignore:
+   #               - node_modules
+   #          - action: rebuild
+   #            path: package.json
+   #    env_file:
+   #       - ./apps/auth/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3001:3001
+   #    networks:
+   #       - common
+
+   # product:
+   #    container_name: api-product
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/product/Dockerfile
+   #       target: development
+   #    command: npm run start:dev product
+   #    env_file:
+   #       - ./apps/product/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3002:3002
+   #    networks:
+   #       - common
+
+   # inventory:
+   #    container_name: api-inventory
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/inventory/Dockerfile
+   #       target: development
+   #    command: npm run start:dev inventory
+   #    env_file:
+   #       - ./apps/inventory/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3003:3003
+   #    networks:
+   #       - common
+
+   # discount:
+   #    container_name: api-discount
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/discount/Dockerfile
+   #       target: development
+   #    command: npm run start:dev discount
+   #    env_file:
+   #       - ./apps/discount/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3004:3004
+   #    networks:
+   #       - common
+
+   # shopping-cart:
+   #    container_name: api-shopping-cart
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/shopping-cart/Dockerfile
+   #       target: development
+   #    command: npm run start:dev shopping-cart
+   #    env_file:
+   #       - ./apps/shopping-cart/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3005:3005
+   #    networks:
+   #       - common
+
+   # purchase-order:
+   #    container_name: api-purchase-order
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/purchase-order/Dockerfile
+   #       target: development
+   #    command: npm run start:dev purchase-order
+   #    env_file:
+   #       - ./apps/purchase-order/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3006:3006
+   #    networks:
+   #       - common
+
+   # notification:
+   #    container_name: api-notification
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/notification/Dockerfile
+   #       target: development
+   #    command: npm run start:dev notification
+   #    env_file:
+   #       - ./apps/notification/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - redis
+   #       - rabbitmq
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3007:3007
+   #    networks:
+   #       - common
+
+   # post:
+   #    container_name: api-post
+   #    build:
+   #       context: .
+   #       dockerfile: ./apps/post/Dockerfile
+   #       target: development
+   #    command: npm run start:dev post
+   #    env_file:
+   #       - ./apps/post/.env
+   #    depends_on:
+   #       - mongodb-primary
+   #       - mongodb-secondary
+   #       - mongodb-arbiter
+   #       - rabbitmq
+   #       - redis
+   #       - auth
+   #    volumes:
+   #       - .:/usr/src/app
+   #       - /usr/src/app/node_modules
+   #    ports:
+   #       - 3008:3008
+   #    networks:
+   #       - common
+
+   # #######################################################################
+   #                         Services & Databases
+   # #######################################################################
+   rabbitmq:
+      container_name: rabbitmq
+      image: rabbitmq:3.13.0-alpine
+      ports:
+         - 5672:5672
+         - 15672:15672
+      restart: always
+
+   redis:
+      container_name: redis
+      image: redis
+      volumes:
+         - cache:/data
+      networks:
+         - common
+      ports:
+         - 6379:6379
+      restart: always
+
+   mongodb-primary:
+      container_name: mongodb-primary
+      image: mongo
+      volumes:
+         - mongodb_master_data:/data/db
+         - ./scripts:/scripts
+      ports:
+         - 27001:27017
+      links:
+         - mongodb-secondary
+         - mongodb-arbiter
+      restart: always
+      healthcheck:
+         test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongod -u mongod-p mongod --quiet) -eq 1
+         interval: 10s
+         start_period: 30s
+      command: ['--bind_ip_all', '--replSet', 'rs0']
+
+   mongodb-secondary:
+      container_name: mongodb-secondary
+      image: mongo
+      ports:
+         - 27002:27017
+      restart: always
+      command: ['--bind_ip_all', '--replSet', 'rs0']
+
+   mongodb-arbiter:
+      container_name: mongodb-arbiter
+      image: mongo
+      ports:
+         - 27003:27017
+      restart: always
+      command: ['--bind_ip_all', '--replSet', 'rs0']
+
+volumes:
+   mongodb_master_data:
+      driver: local
+   cache:
+      driver: local
+
+networks:
+   common:
+      driver: bridge
