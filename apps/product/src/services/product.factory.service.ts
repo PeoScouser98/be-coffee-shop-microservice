@@ -18,7 +18,7 @@ export class ProductFactoryService {
 	) {}
 
 	public async create(payload: ProductDTO): Promise<ServiceResult<ProductDocument>> {
-		const newProduct = await this.productRepository.createOne(payload)
+		const newProduct = await this.productRepository.create(payload)
 		if (!newProduct)
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product.creating'),
@@ -35,7 +35,7 @@ export class ProductFactoryService {
 				errorCode: HttpStatus.BAD_REQUEST
 			})
 
-		const updatedProduct = this.productRepository.updateOneById(id, payload)
+		const updatedProduct = this.productRepository.findByIdAndUpdate(id, payload)
 		if (!updatedProduct) {
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product.updating'),
@@ -60,7 +60,7 @@ export class SneakerProductFactoryService extends ProductFactoryService {
 		const { data, error } = await super.create(productInformation as ProductDTO)
 		if (error) return { error }
 		console.log(attributes)
-		const newProduct = await this.sneakerProductRepository.createOne({
+		const newProduct = await this.sneakerProductRepository.create({
 			_id: data._id,
 			slug: data.slug,
 			...attributes
@@ -75,7 +75,7 @@ export class SneakerProductFactoryService extends ProductFactoryService {
 
 	public override async update(id: string, payload: Partial<IProduct> & Record<string, any>) {
 		if (payload.attributes) {
-			const updatedAccessoryProduct = await this.sneakerProductRepository.updateOneById(
+			const updatedAccessoryProduct = await this.sneakerProductRepository.findByIdAndUpdate(
 				id,
 				payload.attributes
 			)
@@ -102,7 +102,7 @@ export class TopHalfProductFactoryService extends ProductFactoryService {
 		const { attributes, ...productInformation } = payload
 		const { data, error } = await super.create(productInformation as ProductDTO)
 		if (error) return { error }
-		const newProduct = await this.topHalfProductRepository.createOne({
+		const newProduct = await this.topHalfProductRepository.create({
 			_id: data._id,
 			slug: data.slug,
 			...attributes
@@ -117,7 +117,7 @@ export class TopHalfProductFactoryService extends ProductFactoryService {
 
 	public override async update(id: string, payload: Partial<IProduct> & Record<string, any>) {
 		if (payload.attributes) {
-			const updatedAccessoryProduct = await this.topHalfProductRepository.updateOneById(
+			const updatedAccessoryProduct = await this.topHalfProductRepository.findByIdAndUpdate(
 				id,
 				payload.attributes
 			)
@@ -142,7 +142,7 @@ export class AccessoryProductFactoryService extends ProductFactoryService {
 		const { attributes, ...productInformation } = payload
 		const { data, error } = await super.create(productInformation as ProductDTO)
 		if (error) return { error }
-		const newProduct = await this.accessoryProductRepository.createOne({
+		const newProduct = await this.accessoryProductRepository.create({
 			_id: data._id,
 			slug: data.slug,
 			...attributes
@@ -157,7 +157,7 @@ export class AccessoryProductFactoryService extends ProductFactoryService {
 
 	public override async update(id: string, payload: Partial<IProduct> & Record<string, any>) {
 		if (payload.attributes) {
-			const updatedAccessoryProduct = await this.accessoryProductRepository.updateOneById(
+			const updatedAccessoryProduct = await this.accessoryProductRepository.findByIdAndUpdate(
 				id,
 				payload.attributes
 			)

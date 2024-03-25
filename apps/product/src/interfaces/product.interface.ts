@@ -12,7 +12,7 @@ import { ProductCollectionDocument } from 'apps/product/src/schemas/product-coll
 import { ProductLineDocument } from 'apps/product/src/schemas/product-line.schema'
 
 export declare interface IProduct {
-	_id: mongoose.Types.ObjectId
+	_id: mongoose.Types.ObjectId | string
 	name: string
 	description: { vi: string; en: string }
 	price: number

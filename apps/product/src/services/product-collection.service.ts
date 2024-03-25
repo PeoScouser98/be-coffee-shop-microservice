@@ -13,12 +13,12 @@ export class ProductCollectionService {
 	) {}
 
 	async getProductCollections() {
-		const productCollections = await this.productCollectionRepository.findAll()
+		const productCollections = await this.productCollectionRepository.all()
 		return new ServiceResult(productCollections, null)
 	}
 
 	async createProductCollection(payload) {
-		const newProductCollection = await this.productCollectionRepository.createOne(payload)
+		const newProductCollection = await this.productCollectionRepository.create(payload)
 
 		if (!Boolean(newProductCollection))
 			return new ServiceResult(null, {
@@ -31,7 +31,7 @@ export class ProductCollectionService {
 
 	async updateProductCollection(id: string, payload: Partial<ProductCollectionDTO>) {
 		const updatedProductCollection = await (
-			await this.productCollectionRepository.updateOneById(id, payload)
+			await this.productCollectionRepository.findByIdAndUpdate(id, payload)
 		).save()
 
 		if (!Boolean(updatedProductCollection))
@@ -44,7 +44,7 @@ export class ProductCollectionService {
 	}
 
 	async deleteProductCollection(id: string) {
-		const deletedProductCollection = await this.productCollectionRepository.deleteOneById(id)
+		const deletedProductCollection = await this.productCollectionRepository.findAndDeleteById(id)
 		if (!Boolean(deletedProductCollection))
 			return new ServiceResult(deletedProductCollection, null)
 		return new ServiceResult(deletedProductCollection)

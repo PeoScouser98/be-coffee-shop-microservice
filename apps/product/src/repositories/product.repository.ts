@@ -10,7 +10,6 @@ import { AccessoryProduct, AccessoryProductDocument } from '../schemas/accessory
 import { ProductDocument, Product } from '../schemas/product.schema'
 import { SneakerProductDocument, SneakerProduct } from '../schemas/sneaker-product.schema'
 import { TopHalfProduct } from '../schemas/top-half-product.schema'
-import { ProductCollection } from '../schemas/product-collection.schema'
 
 export class ProductRepository
 	extends BaseAbstractRepository<ProductDocument>

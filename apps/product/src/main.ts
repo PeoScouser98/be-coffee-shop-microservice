@@ -7,12 +7,12 @@ import cookieParser from 'cookie-parser'
 import compression from 'compression'
 
 declare const module: any
+const PORT = 3002 as const
 
 async function bootstrap() {
 	const app = await NestFactory.create(ProductModule)
 	const rmqService = app.get<RmqService>(RmqService)
 	const configService = app.get<ConfigService>(ConfigService)
-	const PORT = 3002 as const
 	app.setGlobalPrefix('/v1/api')
 	app.enableCors({
 		credentials: true,

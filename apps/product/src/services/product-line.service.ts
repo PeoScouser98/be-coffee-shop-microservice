@@ -12,11 +12,11 @@ export class ProductLineService {
 		private readonly i18nService: I18nService
 	) {}
 	async getProductLines() {
-		const productLines = await this.productLineRepository.findAll()
+		const productLines = await this.productLineRepository.all()
 		return new ServiceResult(productLines)
 	}
 	async createProductLine(payload: ProductLineDTO) {
-		const newProductLine = await this.productLineRepository.createOne(payload)
+		const newProductLine = await this.productLineRepository.create(payload)
 		if (!newProductLine)
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product_line.creating'),
@@ -28,7 +28,7 @@ export class ProductLineService {
 
 	async updateProductLine(id: string, payload: Partial<ProductLineDTO>) {
 		const updatedProductLine = await (
-			await this.productLineRepository.updateOneById(id, payload)
+			await this.productLineRepository.findByIdAndUpdate(id, payload)
 		).save()
 
 		if (!updatedProductLine)
@@ -41,7 +41,7 @@ export class ProductLineService {
 	}
 
 	async deleteProductLine(id: string) {
-		const deletedProductLine = await this.productLineRepository.deleteOneById(id)
+		const deletedProductLine = await this.productLineRepository.findAndDeleteById(id)
 		if (!deletedProductLine)
 			return new ServiceResult(null, {
 				message: this.i18nService.t('error_messages.product_line.deleting'),

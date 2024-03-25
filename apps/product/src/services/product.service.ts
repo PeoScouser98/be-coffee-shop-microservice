@@ -1,7 +1,7 @@
 import { ServiceResult } from '@app/common'
 import { HttpStatus, Inject, Injectable } from '@nestjs/common'
 import * as _ from 'lodash'
-import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
+import mongoose, { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
 import { ProductDTO } from '../dto/product.dto'
 import { IProduct } from '../interfaces/product.interface'
@@ -19,8 +19,6 @@ import {
 } from '../repositories/product.repository'
 import { ProductDocument } from '../schemas/product.schema'
 import { I18nService } from '@app/i18n'
-import { ProductCollection } from '../schemas/product-collection.schema'
-import { ProductLine } from '../schemas/product-line.schema'
 
 @Injectable()
 export class ProductService {
@@ -109,7 +107,7 @@ export class ProductService {
 	}
 
 	public async deleteProduct(id: string): Promise<ServiceResult<ProductDocument>> {
-		const deletedProduct = await this.productRepository.deleteOneById(id)
+		const deletedProduct = await this.productRepository.findAndDeleteById(id)
 		if (!deletedProduct) {
 			return new ServiceResult(null, {
 				message: this.i18nService.t('errors_messages.product.deleting'),
@@ -118,13 +116,13 @@ export class ProductService {
 		}
 		switch (deletedProduct.type) {
 			case ProductTypeEnum.SNEAKER:
-				await this.sneakerProductRepository.deleteOneById(id)
+				await this.sneakerProductRepository.findAndDeleteById(id)
 				break
 			case ProductTypeEnum.TOP_HALF:
-				await this.topHalfProductRepository.deleteOneById(id)
+				await this.topHalfProductRepository.findAndDeleteById(id)
 				break
 			case ProductTypeEnum.SNEAKER:
-				await this.accessoryProductRepository.deleteOneById(id)
+				await this.accessoryProductRepository.findAndDeleteById(id)
 				break
 
 			default:
@@ -194,7 +192,7 @@ export class ProductService {
 	}
 
 	public async publishProduct(id: string): Promise<ServiceResult<ProductDocument>> {
-		const publisedProduct = await this.productRepository.updateOneById(id, {
+		const publisedProduct = await this.productRepository.findByIdAndUpdate(id, {
 			is_published: true,
 			is_draft: false
 		})
@@ -208,7 +206,7 @@ export class ProductService {
 	}
 
 	public async unpublishProduct(id: string): Promise<ServiceResult<ProductDocument>> {
-		const unpublishedProduct = await this.productRepository.updateOneById(id, {
+		const unpublishedProduct = await this.productRepository.findByIdAndUpdate(id, {
 			status: ProductStatus.SUSPENSED_BUSINESS
 		})
 		if (!unpublishedProduct) {
@@ -234,8 +232,8 @@ export class ProductService {
 		return new ServiceResult(draftProducts)
 	}
 
-	public async getPublishedProductById(id: string) {
-		const product = await this.productRepository.findOneWithFilter({
+	public async getPublishedProductById(id: string | mongoose.Types.ObjectId) {
+		const product = await this.productRepository.findOne({
 			_id: id,
 			is_published: true
 		})

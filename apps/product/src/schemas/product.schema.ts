@@ -63,7 +63,6 @@ export class Product extends BaseAbstractSchema {
 	@Prop({
 		type: mongoose.Types.ObjectId,
 		ref: ProductCollection.name,
-		// autopopulate: true,
 		index: true
 	})
 	collection: mongoose.Types.ObjectId

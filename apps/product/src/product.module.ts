@@ -38,21 +38,20 @@ import mongooseAutoPopulate from 'mongoose-autopopulate'
 		}),
 		DatabaseModule,
 		RmqModule,
-		{ module: AuthModule, global: true },
+		AuthModule,
 		I18nModule,
 		MongooseModule.forFeatureAsync([
 			{
 				name: Product.name,
 				useFactory: () => {
-					const schema = ProductSchema
-					schema.pre('save', function (next) {
+					ProductSchema.pre('save', function (next) {
 						this.name = toCapitalize(this.name)
 						next()
 					})
-					schema.plugin(mongooseSlugUpdater)
-					schema.plugin(mongoosePaginate)
-					schema.plugin(mongooseAutoPopulate)
-					return schema
+					ProductSchema.plugin(mongooseSlugUpdater)
+					ProductSchema.plugin(mongoosePaginate)
+					ProductSchema.plugin(mongooseAutoPopulate)
+					return ProductSchema
 				}
 			},
 			{
