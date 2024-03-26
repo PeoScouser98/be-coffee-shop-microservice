@@ -21,7 +21,7 @@
 		"docker:start": "sh ./scripts/docker.sh"
 	},
 	"dependencies": {
-		"@nestjs-modules/mailer": "^1.11.2",
+		"@nestjs-modules/mailer": "^1.10.3",
 		"@nestjs/cache-manager": "^2.2.1",
 		"@nestjs/common": "^10.3.3",
 		"@nestjs/config": "^3.2.0",
