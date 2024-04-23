@@ -9,14 +9,15 @@
 		"deleteOutDir": true,
 		"assets": [
 			{
-				"include": "locales/**/*",
+				"include": "resources/locales/**/*",
 				"watchAssets": true
 			},
 			{
-				"include": "apps/auth/src/templates",
+				"include": "resources/templates/**/*",
 				"watchAssets": true
 			}
-		]
+		],
+		"webpack": true
 	},
 	"projects": {
 		"common": {
@@ -74,6 +75,17 @@
 				"tsConfigPath": "libs/mailer/tsconfig.lib.json"
 			}
 		},
+		"s3": {
+			"type": "library",
+			"root": "libs/s3",
+			"entryFile": "index",
+			"sourceRoot": "libs/s3/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/s3/tsconfig.lib.json"
+			}
+		},
+
+		
 		"auth": {
 			"type": "application",
 			"root": "apps/auth",

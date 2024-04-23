@@ -1,5 +1,12 @@
 import { ServiceResult } from '@app/common'
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	ConflictException,
+	HttpStatus,
+	Inject,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import * as _ from 'lodash'
 import mongoose, { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
@@ -24,13 +31,13 @@ import { I18nService } from '@app/i18n'
 export class ProductService {
 	constructor(
 		private readonly i18nService: I18nService,
-		@Inject(SneakerProductRepository.provide)
+		@Inject(SneakerProductRepository.name)
 		private readonly sneakerProductRepository: SneakerProductRepository,
-		@Inject(TopHalfProductRepository.provide)
+		@Inject(TopHalfProductRepository.name)
 		private readonly topHalfProductRepository: TopHalfProductRepository,
-		@Inject(AccessoryProductRepository.provide)
+		@Inject(AccessoryProductRepository.name)
 		private readonly accessoryProductRepository: AccessoryProductRepository,
-		@Inject(ProductRepository.provide)
+		@Inject(ProductRepository.name)
 		protected readonly productRepository: ProductRepository
 	) {}
 
@@ -38,10 +45,7 @@ export class ProductService {
 		const existedProductBySku = await this.productRepository.findOneBySku(payload.sku)
 
 		if (existedProductBySku)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_mesages.product.duplicated_sku'),
-				errorCode: HttpStatus.CONFLICT
-			})
+			throw new ConflictException(this.i18nService.t('error_messages.product.duplicated_sku'))
 
 		switch (payload.product_type) {
 			case ProductTypeEnum.SNEAKER:
@@ -64,16 +68,13 @@ export class ProductService {
 				).create(payload)
 
 			default:
-				return new ServiceResult(null, {
-					message: this.i18nService.t('messages.product.invalid_type'),
-					errorCode: HttpStatus.BAD_REQUEST
-				})
+				throw new BadRequestException(this.i18nService.t('error_messages.product.invalid_type'))
 		}
 	}
 
 	public async updateProduct(
 		id: string,
-		type: ProductTypeEnum,
+		type: ProductTypeEnum | string,
 		payload: Partial<IProduct>
 	): Promise<ServiceResult<ProductDocument>> {
 		const update = flatten(payload)
@@ -99,21 +100,15 @@ export class ProductService {
 				).update(id, update)
 
 			default:
-				return new ServiceResult(null, {
-					message: this.i18nService.t('messages.product.invalid_type'),
-					errorCode: HttpStatus.BAD_REQUEST
-				})
+				throw new BadRequestException(this.i18nService.t('error_messages.product.invalid_type'))
 		}
 	}
 
 	public async deleteProduct(id: string): Promise<ServiceResult<ProductDocument>> {
 		const deletedProduct = await this.productRepository.findAndDeleteById(id)
-		if (!deletedProduct) {
-			return new ServiceResult(null, {
-				message: this.i18nService.t('errors_messages.product.deleting'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
-		}
+		if (!deletedProduct)
+			throw new NotFoundException(this.i18nService.t('error_messages.product.deleting'))
+
 		switch (deletedProduct.type) {
 			case ProductTypeEnum.SNEAKER:
 				await this.sneakerProductRepository.findAndDeleteById(id)
@@ -126,20 +121,17 @@ export class ProductService {
 				break
 
 			default:
-				return new ServiceResult(null, {
-					message: this.i18nService.t('errors_messages.product.not_found'),
-					errorCode: HttpStatus.NOT_FOUND
-				})
+				throw new NotFoundException(this.i18nService.t('error_messages.product.not_found'))
 		}
 
-		return new ServiceResult(deletedProduct)
+		return deletedProduct
 	}
 
 	public async getAllPublisedProducts(
 		filter: FilterQuery<ProductDocument>,
 		options: PaginateOptions
-	): Promise<ServiceResult<PaginateResult<ProductDocument>>> {
-		const products = await this.productRepository.paginate(
+	): Promise<PaginateResult<ProductDocument>> {
+		return await this.productRepository.paginate(
 			{ ...filter, is_published: true },
 			{
 				...options,
@@ -155,11 +147,9 @@ export class ProductService {
 				]
 			}
 		)
-
-		return new ServiceResult(products)
 	}
 
-	public async getPublisedProductBySlug({ slug, type }: { slug: string; type: string }) {
+	public async getPublisedProductBySlug({ slug, type }: { slug: string; type: ProductTypeEnum }) {
 		const repository = (() => {
 			switch (type) {
 				case ProductTypeEnum.SNEAKER:
@@ -171,56 +161,41 @@ export class ProductService {
 			}
 		})()
 
-		if (!_.has(ProductTypeEnum, [type]))
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product.invalid_type'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
-
 		const [product, attributes] = await Promise.all([
 			this.productRepository.findOneBySlug(slug, { is_published: true }),
 			repository.findOneBySlug(slug)
 		])
 
-		if (!product || attributes)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('mesages.product.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
+		if (!product || !attributes)
+			throw new NotFoundException(this.i18nService.t('error_messages.product.not_found'))
 
-		return new ServiceResult({ ...product, attributes })
+		return { ...product, attributes }
 	}
 
-	public async publishProduct(id: string): Promise<ServiceResult<ProductDocument>> {
+	public async publishProduct(id: string): Promise<ProductDocument> {
 		const publisedProduct = await this.productRepository.findByIdAndUpdate(id, {
 			is_published: true,
 			is_draft: false
 		})
 		if (!publisedProduct)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('messages.product.publishing_failure'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.product.publishing'))
 
-		return new ServiceResult(publisedProduct)
+		return publisedProduct
 	}
 
-	public async unpublishProduct(id: string): Promise<ServiceResult<ProductDocument>> {
+	public async unpublishProduct(id: string): Promise<ProductDocument> {
 		const unpublishedProduct = await this.productRepository.findByIdAndUpdate(id, {
 			status: ProductStatus.SUSPENSED_BUSINESS
 		})
-		if (!unpublishedProduct) {
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product.updating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
-		}
-		return new ServiceResult(unpublishedProduct)
+		if (!unpublishedProduct)
+			throw new BadRequestException(this.i18nService.t('error_messages.product.updating'))
+
+		return unpublishedProduct
 	}
 
 	public async getAllDraftProducts(
 		paginateOptions: PaginateOptions
-	): Promise<ServiceResult<PaginateResult<ProductDocument>>> {
+	): Promise<PaginateResult<ProductDocument>> {
 		const draftProducts = await this.productRepository.paginate(
 			{ is_draft: true },
 			{
@@ -229,7 +204,7 @@ export class ProductService {
 			}
 		)
 
-		return new ServiceResult(draftProducts)
+		return draftProducts
 	}
 
 	public async getPublishedProductById(id: string | mongoose.Types.ObjectId) {
@@ -238,10 +213,8 @@ export class ProductService {
 			is_published: true
 		})
 		if (!product)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
-		return new ServiceResult(product)
+			throw new NotFoundException(this.i18nService.t('error_messages.product.not_found'))
+
+		return product
 	}
 }

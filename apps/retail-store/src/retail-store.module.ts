@@ -9,9 +9,11 @@ import { DatabaseModule } from '@app/database'
 import { RmqModule } from '@app/rmq'
 import { AuthModule } from 'apps/auth/src/auth.module'
 import { I18nModule } from '@app/i18n'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({ envFilePath: '.env' }),
 		DatabaseModule,
 		RmqModule,
 		AuthModule,

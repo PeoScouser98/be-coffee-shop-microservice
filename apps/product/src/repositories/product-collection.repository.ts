@@ -8,8 +8,6 @@ export class ProductCollectionRepository
 	extends BaseAbstractRepository<ProductCollectionDocument>
 	implements IProductCollectionRepository
 {
-	static provide: string = 'PRODUCT_COLLECTION_REPOSITORY' as const
-
 	constructor(
 		@InjectModel(ProductCollection.name)
 		readonly productCollectionModel: Model<ProductCollectionDocument>,

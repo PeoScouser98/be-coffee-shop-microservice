@@ -14,16 +14,19 @@ import {
 	Res,
 	UseFilters,
 	UseGuards,
+	UseInterceptors,
 	UsePipes
 } from '@nestjs/common'
 
 import { ProductCollectionDTO, productCollectionValidator } from '../dto/product-collection.dto'
 import { ProductCollectionService } from '../services/product-collection.service'
 import { JwtGuard } from '@app/common'
-import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
+import { AllExceptionsFilter } from '@app/common/exceptions/exception.filter'
 import { UserRoles } from 'apps/auth/src/constants/user.constant'
 import { Roles } from '@app/common/decorators/roles.decorator'
 import { I18nService } from '@app/i18n'
+import { ResponseMessage } from '@app/common/decorators/response-message.decorator'
+import { TransformInterceptor } from '@app/common/interceptors/transform-response.interceptor'
 
 @Controller('product-collections')
 export class ProductCollectionController {
@@ -34,15 +37,13 @@ export class ProductCollectionController {
 
 	@Get()
 	@HttpCode(HttpStatus.OK)
+	@ResponseMessage('success_messages.ok')
+	@UseInterceptors(TransformInterceptor)
 	@UseFilters(AllExceptionsFilter)
-	async getProductCollections(@Res() res) {
+	async getProductCollections() {
 		const productCollections = await this.productCollectionService.getProductCollections()
-		const responseBody = new ResponseBody(
-			productCollections,
-			HttpStatus.OK,
-			this.i18nService.t('success_messages.ok')
-		)
-		return res.json(responseBody)
+
+		return productCollections
 	}
 
 	@Post()

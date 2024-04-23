@@ -1,5 +1,5 @@
 import { ServiceResult } from '@app/common'
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ProductLineDTO } from '../dto/product-line.dto'
 import { ProductLineRepository } from '../repositories/product-line.repository'
 import { I18nService } from '@app/i18n'
@@ -7,7 +7,7 @@ import { I18nService } from '@app/i18n'
 @Injectable()
 export class ProductLineService {
 	constructor(
-		@Inject(ProductLineRepository.provide)
+		@Inject(ProductLineRepository.name)
 		private readonly productLineRepository: ProductLineRepository,
 		private readonly i18nService: I18nService
 	) {}
@@ -18,36 +18,24 @@ export class ProductLineService {
 	async createProductLine(payload: ProductLineDTO) {
 		const newProductLine = await this.productLineRepository.create(payload)
 		if (!newProductLine)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product_line.creating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
-
-		return new ServiceResult(newProductLine)
+			throw new BadRequestException(this.i18nService.t('error_messages.product_line.creating'))
+		return newProductLine
 	}
 
 	async updateProductLine(id: string, payload: Partial<ProductLineDTO>) {
-		const updatedProductLine = await (
-			await this.productLineRepository.findByIdAndUpdate(id, payload)
-		).save()
+		const updatedProductLine = await this.productLineRepository.findByIdAndUpdate(id, payload)
 
 		if (!updatedProductLine)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product_line.updating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.product_line.updating'))
 
-		return new ServiceResult(updatedProductLine)
+		return updatedProductLine
 	}
 
 	async deleteProductLine(id: string) {
 		const deletedProductLine = await this.productLineRepository.findAndDeleteById(id)
 		if (!deletedProductLine)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.product_line.deleting'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.product_line.deleting'))
 
-		return new ServiceResult(deletedProductLine)
+		return deletedProductLine
 	}
 }

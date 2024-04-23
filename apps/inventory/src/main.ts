@@ -6,9 +6,6 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import { InventoryModule } from './inventory.module'
 
-declare const module: any
-const PORT = 3003
-
 async function bootstrap() {
 	const app = await NestFactory.create(InventoryModule)
 	const rmqService = app.get<RmqService>(RmqService)
@@ -21,15 +18,10 @@ async function bootstrap() {
 	app.use(cookieParser())
 	app.use(compression())
 	app.connectMicroservice(rmqService.getOptions('INVENTORY'))
-
 	await app.startAllMicroservices()
-	await app.listen(PORT, async () => {
+	await app.listen(configService.get('INVENTORY_SERVICE_PORT'), async () => {
 		const url = await app.getUrl()
 		Log.info(`Inventory service is running on: ${Log.highlight(url)}`)
 	})
-	if (module.hot) {
-		module.hot.accept()
-		module.hot.dispose(() => app.close())
-	}
 }
 bootstrap()

@@ -42,12 +42,15 @@
 	"discount": {
 		"creating": "Failed to create discount code",
 		"updating": "Failed to update discount code",
-		"deleting": "Failed to delete discount code"
+		"deleting": "Failed to delete discount code",
+		"existed": "Discount code already existed"
 	},
 	"inventory": {
+		"creating":"Failed to create product's inventory",
+		"updating":"Failed to updating product's inventory",
 		"product_not_found": "Product does not exist in inventory"
 	},
-	"user_cart": {
+	"shopping_cart": {
 		"out_of_order": "Product is out of order",
 		"not_found": "User cart could not be found"
 	}

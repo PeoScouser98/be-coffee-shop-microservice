@@ -1,7 +1,6 @@
 import mongoose, { FilterQuery, ProjectionType, QueryOptions } from 'mongoose'
 
 export declare interface IBaseRepository<T> {
-	provide: string
 	all: () => Promise<T[]>
 	create: (payload: T) => Promise<T>
 	findOneById: (id: string | mongoose.Types.ObjectId) => Promise<T>

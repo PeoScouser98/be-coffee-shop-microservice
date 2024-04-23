@@ -1,5 +1,11 @@
 import { ServiceResult } from '@app/common'
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	HttpStatus,
+	Inject,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import { FilterQuery } from 'mongoose'
 import { RetailStoreRepository } from './retail-store.repository'
 import { RetailStoreDTO } from './dto/retail-store.dto'
@@ -16,7 +22,7 @@ export class RetailStoreService {
 
 	public async getAllRetailStore() {
 		const allRetailStores = await this.retailStoreRepository.all()
-		return new ServiceResult(allRetailStores)
+		return allRetailStores
 	}
 
 	public async findRetailStore(filterQuery: FilterQuery<IRetailStore>) {
@@ -24,39 +30,30 @@ export class RetailStoreService {
 			if (!filterQuery[key]) delete filterQuery[key]
 		}
 		const branchStores = await this.retailStoreRepository.find(filterQuery)
-		return new ServiceResult(branchStores)
+		return branchStores
 	}
 
 	public async createRetailStore(payload: RetailStoreDTO) {
 		const newBranchStore = await this.retailStoreRepository.create(payload)
 		if (!newBranchStore) {
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.retail_store.creating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.retail_store.creating'))
 		}
-		return new ServiceResult(newBranchStore)
+		return newBranchStore
 	}
 
 	public async updateRetailStore(id: string, payload: Partial<RetailStoreDTO>) {
 		const updatedBranchStore = await this.retailStoreRepository.findByIdAndUpdate(id, payload)
 		if (!updatedBranchStore) {
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.retail_store.updating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.retail_store.updating'))
 		}
-		return new ServiceResult(updatedBranchStore)
+		return updatedBranchStore
 	}
 
 	public async deleteRetailStore(id: string) {
 		const deletedBranchStore = await this.retailStoreRepository.findAndDeleteById(id)
 		if (!deletedBranchStore) {
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.retail_store.deleting'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.retail_store.deleting'))
 		}
-		return new ServiceResult(deletedBranchStore)
+		return deletedBranchStore
 	}
 }

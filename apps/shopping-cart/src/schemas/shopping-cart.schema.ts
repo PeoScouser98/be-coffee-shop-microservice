@@ -9,7 +9,7 @@ export type ShoppingCartDocument = HydratedDocument<IShoppingCart>
 const COLLECTION_NAME = 'shopping_carts'
 
 @Schema({ collection: COLLECTION_NAME, ...BaseAbstractSchema.defaultSchemaOptions })
-export class UserCartModelSchema extends BaseAbstractSchema {
+export class ShoppingCartModelSchema extends BaseAbstractSchema {
 	@Prop({
 		type: String,
 		enum: Object.values(ShoppingCartStatus),
@@ -33,4 +33,4 @@ export class UserCartModelSchema extends BaseAbstractSchema {
 	session_id: string | null
 }
 
-export const UserCartSchema = SchemaFactory.createForClass(UserCartModelSchema)
+export const UserCartSchema = SchemaFactory.createForClass(ShoppingCartModelSchema)

@@ -20,7 +20,7 @@ export class DiscountRepository
 		super(discountModel, connection)
 	}
 
-	public async getProductByDisCountCode(discountCode: string) {
+	public async getProductByDiscountCode(discountCode: string) {
 		return await this.discountModel
 			.findOne({ discount_code: discountCode })
 			.populate('products')

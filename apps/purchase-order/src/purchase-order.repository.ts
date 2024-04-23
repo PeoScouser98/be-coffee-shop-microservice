@@ -9,8 +9,6 @@ export class PurchaseOrderRepository
 	extends BaseAbstractRepository<PurchaseOrderDocument>
 	implements IOrderRepository
 {
-	static provide: string = 'PURCHASE_ORDER_REPOSITORY'
-
 	constructor(
 		@InjectModel(PurchaseOrder.name) orderModel: Model<PurchaseOrderDocument>,
 		@InjectConnection() connection: Connection

@@ -22,7 +22,7 @@ import { LocalStrategy } from './strategies/local.strategy'
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: 'apps/auth/.env'
+			envFilePath: '.env'
 		}),
 		RmqModule,
 		I18nModule,
@@ -38,7 +38,6 @@ import { LocalStrategy } from './strategies/local.strategy'
 					UserSchema.methods.authenticate = function (password: string) {
 						return compareSync(password, this.password)
 					}
-
 					UserSchema.pre('save', function (next) {
 						this.password = hashSync(
 							this.password,
@@ -62,8 +61,8 @@ import { LocalStrategy } from './strategies/local.strategy'
 		AuthService,
 		UserService,
 		UserTokenService,
-		{ provide: UserRepository.provide, useClass: UserRepository },
-		{ provide: UserTokenRepository.provide, useClass: UserTokenRepository }
+		{ provide: UserRepository.name, useClass: UserRepository },
+		{ provide: UserTokenRepository.name, useClass: UserTokenRepository }
 	],
 	controllers: [AuthController, UserController],
 	exports: [AuthService, UserTokenService]

@@ -1,66 +1,50 @@
-import { AllExceptionsFilter, JwtGuard, ResponseBody, ZodValidationPipe } from '@app/common'
+import { AllExceptionsFilter, JwtGuard, ZodValidationPipe } from '@app/common'
+import { ResponseMessage } from '@app/common/decorators/response-message.decorator'
 import { Roles } from '@app/common/decorators/roles.decorator'
+import { TransformInterceptor } from '@app/common/interceptors/transform-response.interceptor'
+import { ParseObjectIdPipe } from '@app/common/pipes/object-id.pipe'
 import {
 	Body,
 	Controller,
 	Get,
 	HttpCode,
-	HttpException,
 	HttpStatus,
 	Param,
 	Post,
-	Res,
 	UseFilters,
 	UseGuards,
+	UseInterceptors,
 	UsePipes
 } from '@nestjs/common'
-import { Response } from 'express'
+import { UserRoles } from 'apps/auth/src/constants/user.constant'
 import { InventoryDTO, InventoryValidator } from './dto/inventory.dto'
 import { InventoryService } from './inventory.service'
-import { UserRoles } from 'apps/auth/src/constants/user.constant'
-import { I18nService } from '@app/i18n'
-import { ParseObjectId } from '@app/common/pipes/object-id.pipe'
 
 @Controller('inventories')
 export class InventoryController {
-	constructor(
-		private readonly inventoryService: InventoryService,
-		private readonly i18nService: I18nService
-	) {}
+	constructor(private readonly inventoryService: InventoryService) {}
 
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
+	@ResponseMessage('success_messages.inventory.created')
+	@UseInterceptors(TransformInterceptor)
 	@UsePipes(new ZodValidationPipe(InventoryValidator))
 	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
 	@UseGuards(JwtGuard)
 	@UseFilters(AllExceptionsFilter)
-	public async createProductInventory(@Body() payload: InventoryDTO, @Res() res: Response) {
-		const { data, error } = await this.inventoryService.createProductInventory(payload)
-		if (error) throw new HttpException(error, error.errorCode)
-		const responseBody = new ResponseBody(
-			data,
-			HttpStatus.CREATED,
-			this.i18nService.t('success_messages.inventory.created')
-		)
-		return res.json(responseBody)
+	public async createProductInventory(@Body() payload: InventoryDTO) {
+		return await this.inventoryService.createProductInventory(payload)
 	}
 
 	@Get(':productId')
 	@HttpCode(HttpStatus.OK)
+	@ResponseMessage('success_messages.ok')
+	@UseInterceptors(TransformInterceptor)
 	@UseGuards(JwtGuard)
 	@UseFilters(AllExceptionsFilter)
 	public async getProductInventory(
-		@Param('productId', new ParseObjectId()) productId: string,
-		@Res() res: Response
+		@Param('productId', new ParseObjectIdPipe()) productId: string
 	) {
-		console.log(productId)
-		const { data, error } = await this.inventoryService.getProductInventory(productId)
-		if (error) throw new HttpException(error, error.errorCode)
-		const responseBody = new ResponseBody(
-			data,
-			HttpStatus.CREATED,
-			this.i18nService.t('success_messages.ok')
-		)
-		return res.json(responseBody)
+		return await this.inventoryService.getProductInventory(productId)
 	}
 }

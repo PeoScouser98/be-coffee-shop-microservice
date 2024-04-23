@@ -9,8 +9,7 @@ import { NotificationRepository } from './notification.repository'
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			isGlobal: true,
-			envFilePath: './apps/notification/.env'
+			envFilePath: '.env'
 		}),
 		DatabaseModule,
 		RmqModule

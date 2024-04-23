@@ -39,12 +39,15 @@
 		"creating": "Tạo mã giảm giá thất bại",
 		"updating": "Cập nhật mã giảm giá thất bại",
 		"deleting": "Xóa mã giảm giá thất bại",
-		"not_found": "Không tìm thấy mã giảm giá"
+		"not_found": "Không tìm thấy mã giảm giá",
+		"existed": "Mã giảm giá đã tồn tại"
 	},
 	"inventory": {
+		"creating":"Thêm sản phẩm vào kho hàng thất bại",
+		"updating":"Cập nhật sản phẩm trong kho hàng thất bại",
 		"product_not_found": "Sản phẩm không tồn tại trong kho hàng"
 	},
-	"user_cart": {
+	"shopping_cart": {
 		"out_of_order": "Kho hàng không đủ số lượng yêu cầu",
 		"not_found": "Giỏ hàng không tồn tại"
 	}

@@ -1,5 +1,12 @@
 import { ServiceResult } from '@app/common'
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	ConflictException,
+	HttpStatus,
+	Inject,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import { UserDTO } from '../dto/user.dto'
 import { UserRepository } from '../repositories/user.repository'
 import { UserDocument } from '../schemas/user.schema'
@@ -10,7 +17,7 @@ import { I18nService } from '@app/i18n'
 @Injectable()
 export class UserService {
 	constructor(
-		@Inject(UserRepository.provide)
+		@Inject(UserRepository.name)
 		private readonly userRepository: UserRepository,
 		private readonly authService: AuthService,
 		private readonly i18nService: I18nService,
@@ -20,22 +27,15 @@ export class UserService {
 	public async createUser(payload: UserDTO) {
 		const existedUser = await this.userRepository.findUserByEmail(payload.email)
 		if (existedUser)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.conflict'),
-				errorCode: HttpStatus.CONFLICT
-			})
-
-		const { privateKey, publicKey } = this.authService.generateKeyPair()
+			throw new ConflictException(this.i18nService.t('error_messages.user.conflict'))
 
 		const newUser = await this.userRepository.createUser(payload)
 		if (!newUser)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.creating'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.user.registering'))
 
+		const { privateKey, publicKey } = this.authService.generateKeyPair()
 		const { accessToken, refreshToken } = await this.authService.generateTokenPair({
-			payload: { _id: newUser?._id?.toString(), email: newUser.email },
+			payload: { _id: newUser?._id?.toString(), email: newUser.email, role: newUser.role },
 			privateKey: privateKey
 		})
 
@@ -48,17 +48,12 @@ export class UserService {
 		}
 
 		await this.userTokenService.upsertUserToken(newUserToken)
-
-		return new ServiceResult({ user: newUser, accessToken, refreshToken }, null)
+		return { user: newUser, accessToken, refreshToken }
 	}
 
-	public async findUserById(userId: string): Promise<ServiceResult<UserDocument>> {
+	public async findUserById(userId: string): Promise<UserDocument> {
 		const user = await this.userRepository.findOneById(userId)
-		if (!user)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
-		return new ServiceResult(user, null)
+		if (!user) throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
+		return user
 	}
 }

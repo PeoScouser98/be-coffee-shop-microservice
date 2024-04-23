@@ -1,66 +1,53 @@
-import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
+import { ResponseMessage } from '@app/common/decorators/response-message.decorator'
+import { AllExceptionsFilter } from '@app/common/exceptions/exception.filter'
+import { TransformInterceptor } from '@app/common/interceptors/transform-response.interceptor'
 import {
 	Body,
 	Controller,
 	Get,
+	Headers,
 	HttpCode,
 	HttpStatus,
 	Patch,
 	Req,
-	Res,
-	UseFilters
+	UseFilters,
+	UseInterceptors
 } from '@nestjs/common'
-import { Request, Response } from 'express'
-import { ShoppingCartService } from './shopping-cart.service'
-import { ResponseBody } from '@app/common'
-import { I18nService } from '@app/i18n'
+import { Request } from 'express'
 import { isValidObjectId } from 'mongoose'
 import { ICartItem } from './interfaces/shopping-cart.interface'
+import { ShoppingCartService } from './shopping-cart.service'
 
 @Controller('shopping-cart')
 export class ShoppingCartController {
-	constructor(
-		private readonly shoppingCartService: ShoppingCartService,
-		private readonly i18nService: I18nService
-	) {}
+	constructor(private readonly shoppingCartService: ShoppingCartService) {}
 
 	@Patch()
 	@HttpCode(HttpStatus.CREATED)
+	@ResponseMessage('success_messages.shopping_cart.updated')
+	@UseInterceptors(TransformInterceptor)
 	@UseFilters(AllExceptionsFilter)
-	public async updateShoppingCart(
-		@Req() req: Request,
-		@Body() payload: ICartItem,
-		@Res() res: Response
-	) {
+	public async updateShoppingCart(@Req() req: Request, @Body() payload: ICartItem) {
 		const credential = req.cookies.client_id ?? req.cookies.SSID
-		const { data } = await this.shoppingCartService.updateShoppingCart(credential, payload)
-		const responseBody = new ResponseBody(
-			data,
-			HttpStatus.CREATED,
-			this.i18nService.t('success_messages.ok')
-		)
-		return res.json(responseBody)
+		return await this.shoppingCartService.updateShoppingCart(credential, payload)
 	}
 
 	@Get()
 	@HttpCode(HttpStatus.OK)
+	@ResponseMessage('success_messages.ok')
+	@UseInterceptors(TransformInterceptor)
 	@UseFilters(AllExceptionsFilter)
-	public async getShoppingCart(@Req() req: Request, @Res() res: Response) {
-		const credential = req.cookies.client_id ?? req.cookies.SSID
+	public async getShoppingCart(@Headers('X-CLIENT-ID') userId: string, @Req() req: Request) {
+		const credential = userId ?? req.cookies.SSID
 		// Get existed cart or create a new one
-		const { data: existedCart } = await this.shoppingCartService.getUserShoppingCart(credential)
+		const existedCart = await this.shoppingCartService.getUserShoppingCart(credential)
 		if (!existedCart) {
 			const user = isValidObjectId(credential) ? credential : null
-			const { data } = await this.shoppingCartService.createShoppingCart({
+			return await this.shoppingCartService.createShoppingCart({
 				session_id: req.sessionID,
 				user: user
 			})
-			return res.json(
-				new ResponseBody(data, HttpStatus.OK, this.i18nService.t('success_messages.ok'))
-			)
 		}
-		return res.json(
-			new ResponseBody(existedCart, HttpStatus.OK, this.i18nService.t('success_messages.ok'))
-		)
+		return existedCart
 	}
 }

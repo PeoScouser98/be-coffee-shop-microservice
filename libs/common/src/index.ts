@@ -13,7 +13,7 @@ export * from './decorators/current-user.decorator'
 export * from './pipes/zod-validation.pipe'
 
 // Exceptions
-export * from './exceptions/all-exceptions-filter'
+export * from './exceptions/exception.filter'
 
 // Helpers
 export * from './helpers/http.helper'

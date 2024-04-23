@@ -5,7 +5,7 @@ import mongoose, { Connection, Model } from 'mongoose'
 import { ShoppingCartStatus } from './constants/shopping-cart.constant'
 import { ICartItem } from './interfaces/shopping-cart.interface'
 import { IShoppingCartRepository } from './interfaces/shopping-cart.repository.interface'
-import { ShoppingCartDocument, UserCartModelSchema } from './schemas/shopping-cart.schema'
+import { ShoppingCartDocument, ShoppingCartModelSchema } from './schemas/shopping-cart.schema'
 
 @Injectable()
 export class ShoppingCartRepository
@@ -15,7 +15,7 @@ export class ShoppingCartRepository
 	static provide: string = 'USER_CART_REPOSITORY' as const
 
 	constructor(
-		@InjectModel(UserCartModelSchema.name)
+		@InjectModel(ShoppingCartModelSchema.name)
 		private readonly shoppingCartModel: Model<ShoppingCartDocument>,
 		@InjectConnection() connection: Connection
 	) {

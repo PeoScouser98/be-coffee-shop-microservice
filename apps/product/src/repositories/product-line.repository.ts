@@ -11,8 +11,6 @@ export class ProductLineRepository
 	extends BaseAbstractRepository<ProductLineDocument>
 	implements IProductLineRepository
 {
-	static provide: string = 'PRODUCT_LINE_REPOSITORY' as const
-
 	constructor(
 		@InjectModel(ProductLine.name)
 		readonly productLineModel: Model<ProductLineDocument>,

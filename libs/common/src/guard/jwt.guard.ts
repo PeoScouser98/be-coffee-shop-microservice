@@ -18,11 +18,11 @@ export class JwtGuard implements CanActivate {
 			throw new UnauthorizedException('Access token is required')
 		}
 		try {
-			const { data, error } = await this.userTokenService.getUserTokenByUserId(
+			const userToken = await this.userTokenService.getUserTokenByUserId(
 				request.cookies.client_id
 			)
-			if (error) throw new UnauthorizedException(error.message)
-			const publicKey = Buffer.from(data.public_key)
+
+			const publicKey = Buffer.from(userToken.public_key)
 			const payload = this.jwtService.verify(token, {
 				publicKey
 			})

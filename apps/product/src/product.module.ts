@@ -29,17 +29,16 @@ import { ProductCollectionService } from './services/product-collection.service'
 import { ProductLineService } from './services/product-line.service'
 import { ProductService } from './services/product.service'
 import mongooseAutoPopulate from 'mongoose-autopopulate'
+import { S3Module } from '@app/s3'
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({
-			isGlobal: true,
-			envFilePath: './apps/product/.env'
-		}),
-		DatabaseModule,
-		RmqModule,
+		ConfigModule.forRoot({ envFilePath: '.env' }),
 		AuthModule,
+		S3Module,
+		RmqModule,
 		I18nModule,
+		DatabaseModule,
 		MongooseModule.forFeatureAsync([
 			{
 				name: Product.name,
@@ -99,27 +98,27 @@ import mongooseAutoPopulate from 'mongoose-autopopulate'
 		ProductLineService,
 		{
 			useClass: ProductRepository,
-			provide: ProductRepository.provide
+			provide: ProductRepository.name
 		},
 		{
 			useClass: SneakerProductRepository,
-			provide: SneakerProductRepository.provide
+			provide: SneakerProductRepository.name
 		},
 		{
 			useClass: TopHalfProductRepository,
-			provide: TopHalfProductRepository.provide
+			provide: TopHalfProductRepository.name
 		},
 		{
 			useClass: AccessoryProductRepository,
-			provide: AccessoryProductRepository.provide
+			provide: AccessoryProductRepository.name
 		},
 		{
 			useClass: ProductLineRepository,
-			provide: ProductLineRepository.provide
+			provide: ProductLineRepository.name
 		},
 		{
 			useClass: ProductCollectionRepository,
-			provide: ProductCollectionRepository.provide
+			provide: ProductCollectionRepository.name
 		}
 	],
 	exports: [ProductService]

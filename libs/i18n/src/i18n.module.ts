@@ -16,12 +16,13 @@ import { I18nService } from './i18n.service'
 				loaderOptions: {
 					path: 'resources/locales',
 					watch: true
-				}
+				},
+				typesOutputPath: process.cwd() + '/resources/locales/i18n.generated.ts'
 			}),
 			resolvers: [
 				{ use: QueryResolver, options: ['lang'] },
 				new HeaderResolver(['Accept-Language']),
-				new CookieResolver(),
+				new CookieResolver(['NEXT_LOCALE']),
 				AcceptLanguageResolver
 			]
 		})

@@ -15,7 +15,6 @@ export class ProductRepository
 	extends BaseAbstractRepository<ProductDocument>
 	implements IProductRepository
 {
-	static provide: string = 'PRODUCT_REPOSITORY' as const
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: PaginateModel<ProductDocument>,

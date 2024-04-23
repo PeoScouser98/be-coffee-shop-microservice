@@ -11,8 +11,6 @@ export class UserRepository
 	extends BaseAbstractRepository<UserDocument>
 	implements IUserRepository
 {
-	static provide: string = 'USER_REPOSITORY' as const
-
 	constructor(
 		@InjectModel(User.name) private readonly userModel: Model<UserDocument>,
 		@InjectConnection() connection: Connection

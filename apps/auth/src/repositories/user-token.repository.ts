@@ -10,8 +10,6 @@ export class UserTokenRepository
 	extends BaseAbstractRepository<UserTokenDocument>
 	implements IUserTokenRepository
 {
-	static provide: string = 'USER_TOKEN_REPOSITORY' as const
-
 	constructor(
 		@InjectModel(UserToken.name)
 		private readonly userTokenModel: Model<UserTokenDocument>,

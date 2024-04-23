@@ -1,29 +1,38 @@
+import { DatabaseModule } from '@app/database'
+import { I18nModule } from '@app/i18n'
+import { RmqModule } from '@app/rmq'
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
-import * as mongoosePaginate from 'mongoose-paginate-v2'
+import { AuthModule } from 'apps/auth/src/auth.module'
+import { isNil } from 'lodash'
+import mongoosePaginate from 'mongoose-paginate-v2'
+import { DiscountApplyingMethod } from './constants/discount.contant'
 import { DiscountController } from './discount.controller'
 import { DiscountRepository } from './discount.repository'
 import { DiscountService } from './discount.service'
 import { DiscountModelSchema, DiscountSchema } from './schemas/discount.schema'
-import { isNil } from 'lodash'
-import { DiscountApplyingMethod } from './constants/discount.contant'
-import { DatabaseModule } from '@app/database'
 
 @Module({
 	imports: [
+		AuthModule,
+		ConfigModule.forRoot({
+			envFilePath: '.env'
+		}),
 		DatabaseModule,
+		RmqModule,
+		I18nModule,
 		MongooseModule.forFeatureAsync([
 			{
 				name: DiscountModelSchema.name,
 				useFactory: () => {
-					const schema = DiscountSchema
 					DiscountSchema.pre('save', function () {
 						if (isNil(this.applied_for_products))
 							this.applying_method = DiscountApplyingMethod.ALL
 						else this.applying_method = DiscountApplyingMethod.SPECIFIC
 					})
-					schema.plugin(mongoosePaginate)
-					return schema
+					DiscountSchema.plugin(mongoosePaginate)
+					return DiscountSchema
 				}
 			}
 		])

@@ -1,5 +1,14 @@
 import { ServiceResult } from '@app/common'
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import { I18nService } from '@app/i18n'
+import { MailerService } from '@nestjs-modules/mailer'
+import {
+	BadRequestException,
+	HttpException,
+	HttpStatus,
+	Inject,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Algorithm, JwtPayload } from 'jsonwebtoken'
@@ -8,52 +17,42 @@ import { IUser } from '../interfaces/user.interface'
 import { UserTokenRepository } from '../repositories/user-token.repository'
 import { UserRepository } from '../repositories/user.repository'
 import { UserDocument } from '../schemas/user.schema'
-import { I18nService } from '@app/i18n'
-import { MailerService } from '@nestjs-modules/mailer'
+import { UserTokenService } from './user-token.service'
+import { UserRoles } from '../constants/user.constant'
 
 @Injectable()
 export class AuthService {
 	constructor(
-		@Inject(UserTokenRepository.provide)
+		@Inject(UserTokenRepository.name)
 		private readonly userTokenRepository: UserTokenRepository,
-		@Inject(UserRepository.provide)
+		@Inject(UserRepository.name)
 		private readonly userRepository: UserRepository,
+		private readonly userTokenService: UserTokenService,
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
 		private readonly i18nService: I18nService,
 		private readonly mailerService: MailerService
 	) {}
 
-	public async verifyUser(
-		payload: Pick<IUser, 'email' | 'password'>
-	): Promise<ServiceResult<UserDocument>> {
+	async verifyUser(payload: Pick<IUser, 'email' | 'password'>): Promise<UserDocument> {
 		const user = await this.userRepository.findUserByEmail(payload.email)
-		if (!user)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
+		if (!user) throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
 
 		if (!user.authenticate(payload.password))
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.auth.incorrect_password'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
+			throw new BadRequestException(this.i18nService.t('error_messages.auth.incorrect_password'))
 
-		return new ServiceResult(user)
+		return user
 	}
 
-	public async revokeToken(userId: string) {
+	async revokeToken(userId: string) {
 		const deletedUserToken = await this.userTokenRepository.deleteByUserId(userId)
 		if (!deletedUserToken)
-			return new ServiceResult(null, {
-				message: 'Không tìm thấy người dùng',
-				errorCode: HttpStatus.NOT_FOUND
-			})
-		return new ServiceResult(true)
+			throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
+
+		return true
 	}
 
-	public generateKeyPair() {
+	generateKeyPair() {
 		return crypto.generateKeyPairSync('rsa', {
 			modulusLength: +this.configService.get('CRYPTO_MODULUS_LENGTH'),
 			publicKeyEncoding: {
@@ -67,11 +66,11 @@ export class AuthService {
 		})
 	}
 
-	public async generateTokenPair({
+	async generateTokenPair({
 		payload,
 		privateKey
 	}: {
-		payload: { _id: string; email: string }
+		payload: { _id: string; email: string; role: UserRoles }
 		privateKey: string
 	}) {
 		const algorithm: Algorithm = this.configService.get<Algorithm>('JWT_ALGORITHM')
@@ -97,45 +96,29 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	public async verifyToken(token: string, publicKey: string): Promise<JwtPayload> {
+	async verifyToken(token: string, publicKey: string): Promise<JwtPayload> {
 		return await this.jwtService.verifyAsync(token, {
 			publicKey: publicKey,
 			algorithms: [this.configService.get<Algorithm>('JWT_ALGORITHM')]
 		})
 	}
 
-	public async changePassword(payload: {
-		email: string
-		currentPassword: string
-		newPassword: string
-	}) {
+	async changePassword(payload: { email: string; currentPassword: string; newPassword: string }) {
 		const user = await this.userRepository.findUserByEmail(payload.email)
-		if (!user)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
+		if (!user) throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
 		if (!user.authenticate(payload.currentPassword))
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.incorrect_password'),
-				errorCode: HttpStatus.BAD_REQUEST
-			})
-
+			throw new BadRequestException(this.i18nService.t('error_messages.auth.incorrect_password'))
 		user.password = payload.newPassword
 		const updatedUser = await user.save()
-		return new ServiceResult(updatedUser)
+		return updatedUser
 	}
 
-	public async recoverPassword(origin: string, payload) {
+	async recoverPassword(origin: string, payload) {
 		const user = await this.userRepository.findUserByEmail(payload.email)
-		if (!user)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.user.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
+		if (!user) throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
 		const { publicKey, privateKey } = this.generateKeyPair()
 		const { accessToken, refreshToken } = await this.generateTokenPair({
-			payload: { _id: String(user._id), email: user.email },
+			payload: { _id: String(user._id), email: user.email, role: user.role },
 			privateKey
 		})
 		await this.userTokenRepository.updateOneByUserId(
@@ -159,14 +142,14 @@ export class AuthService {
 			}
 		})
 
-		return new ServiceResult({
+		return {
 			accessToken,
 			clientId: user._id,
 			result: result.response
-		})
+		}
 	}
 
-	public async resetPassword(accessToken: string, userId: string, newPassword: string) {
+	async resetPassword(accessToken: string, userId: string, newPassword: string) {
 		const reliableUserToken = await this.userTokenRepository.findOneByUserId(userId)
 		if (!reliableUserToken)
 			return new ServiceResult(null, {
@@ -181,7 +164,44 @@ export class AuthService {
 				errorCode: HttpStatus.NOT_FOUND
 			})
 		user.password = newPassword
-		const updatedUser = await user.save()
-		return new ServiceResult(updatedUser)
+
+		return await user.save()
+	}
+
+	async refreshToken(
+		clientId: string,
+		clientRefreshToken: string
+	): Promise<{ accessToken: string; refreshToken: string }> {
+		if (!clientId || !clientRefreshToken) throw new BadRequestException()
+
+		const suspectUserToken =
+			await this.userTokenService.getUserTokenByRefreshToken(clientRefreshToken)
+		if (suspectUserToken) {
+			const decodeUser = await this.verifyToken(
+				suspectUserToken.refresh_token,
+				suspectUserToken.public_key
+			)
+			await this.userTokenService.deleteUserTokenByUserId(decodeUser?._id?.toString())
+			throw new HttpException('Refresh token không còn khả dụng', HttpStatus.FORBIDDEN)
+		}
+
+		const reliableUserToken = await this.userTokenService.getUserTokenByUserId(clientId)
+		const decodeUser = await this.verifyToken(
+			reliableUserToken.refresh_token,
+			reliableUserToken.public_key
+		)
+
+		// Create new access/refresh tokens pair
+		const { accessToken, refreshToken } = await this.generateTokenPair({
+			payload: { _id: decodeUser?._id, email: decodeUser?.email, role: decodeUser?.role },
+			privateKey: reliableUserToken.private_key
+		})
+
+		// Add previous refresh token used to decode to used refresh token list
+		await this.userTokenService.updateUserTokenByUserId(decodeUser?._id, {
+			refreshToken
+		})
+
+		return { accessToken, refreshToken }
 	}
 }

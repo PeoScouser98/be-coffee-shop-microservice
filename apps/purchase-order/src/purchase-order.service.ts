@@ -8,9 +8,9 @@ import { PurchaseOrderStatus } from './constants/purchase-order.const'
 @Injectable()
 export class OrderService {
 	constructor(
-		@Inject(PurchaseOrderRepository.provide)
+		@Inject(PurchaseOrderRepository.name)
 		private readonly purchaseOrderRepository: PurchaseOrderRepository,
-		@Inject(ShoppingCartRepository.provide)
+		@Inject(ShoppingCartRepository.name)
 		private readonly shoppingCartRepository: ShoppingCartRepository,
 		private readonly i18nService: I18nService
 	) {}

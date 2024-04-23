@@ -11,9 +11,11 @@ import { I18nModule } from '@app/i18n'
 import { ShoppingCartModule } from 'apps/shopping-cart/src/shopping-cart.module'
 import { RmqModule } from '@app/rmq'
 import { MailerModule } from '@app/mailer'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({ envFilePath: '.env' }),
 		DatabaseModule,
 		I18nModule,
 		RmqModule,
@@ -25,7 +27,7 @@ import { MailerModule } from '@app/mailer'
 	controllers: [OrderController],
 	providers: [
 		OrderService,
-		{ provide: PurchaseOrderRepository.provide, useClass: PurchaseOrderRepository }
+		{ provide: PurchaseOrderRepository.name, useClass: PurchaseOrderRepository }
 	]
 })
 export class UserOrderModule {}

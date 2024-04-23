@@ -1,8 +1,15 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
+import {
+	ConflictException,
+	HttpStatus,
+	Inject,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import { DiscountDTO } from './dto/discount.dto'
 import { DiscountRepository } from './discount.repository'
 import { ServiceResult } from '@app/common'
 import { I18nService } from '@app/i18n'
+import mongoose from 'mongoose'
 
 @Injectable()
 export class DiscountService {
@@ -11,33 +18,41 @@ export class DiscountService {
 		private readonly i18nService: I18nService
 	) {}
 
-	public async createDiscountCode(payload: DiscountDTO) {
-		const newDiscountCode = await this.discountRepository.create(payload)
-		return new ServiceResult(newDiscountCode)
+	public async getAllDiscountCodes() {
+		return await this.discountRepository.find()
 	}
 
-	public async getAllDiscountCodes() {
-		const discountCodes = await this.discountRepository.find()
-		return new ServiceResult(discountCodes)
+	public async createDiscountCode(payload: DiscountDTO) {
+		const existedDiscountCode = await this.discountRepository.getProductByDiscountCode(
+			payload.discount_code
+		)
+		if (existedDiscountCode) {
+			throw new ConflictException(this.i18nService.t('error_messages.discount.existed'))
+		}
+		return await this.discountRepository.create(payload)
 	}
 
 	public async getAllProductByDiscountCode(discountCode: string) {
-		const products = await this.discountRepository.findOne({
+		return await this.discountRepository.findOne({
 			discount_code: discountCode
 		})
 	}
 
-	public async getDiscountAmount() {}
+	public async updateDiscountCode(id: mongoose.Types.ObjectId, payload: Partial<DiscountDTO>) {
+		const updatedDiscountCode = await this.discountRepository.findByIdAndUpdate(id, payload)
+		if (!updatedDiscountCode)
+			throw new NotFoundException(this.i18nService.t('error_messages.discount.not_found'))
+		return updatedDiscountCode
+	}
 
 	public async deleteDiscountCode(id: string) {
 		const deletedDiscountCode = await this.discountRepository.findAndDeleteById(id)
 		if (!deletedDiscountCode)
-			return new ServiceResult(null, {
-				message: this.i18nService.t('error_messages.discount.not_found'),
-				errorCode: HttpStatus.NOT_FOUND
-			})
-		return new ServiceResult(deletedDiscountCode)
+			throw new NotFoundException(this.i18nService.t('error_messages.discount.not_found'))
+		return deletedDiscountCode
 	}
 
-	public async cancelDiscountCode() {}
+	public async getDiscountAmount() {}
+
+	public async cancelDiscountCode(discountCode) {}
 }

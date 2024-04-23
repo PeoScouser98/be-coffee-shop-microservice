@@ -1,82 +1,89 @@
 import { JwtGuard, ZodValidationPipe } from '@app/common'
 import { Roles } from '@app/common/decorators/roles.decorator'
-import { AllExceptionsFilter } from '@app/common/exceptions/all-exceptions-filter'
-import { ResponseBody } from '@app/common'
+import { AllExceptionsFilter } from '@app/common/exceptions/exception.filter'
 import {
 	Body,
 	Controller,
 	Delete,
 	Get,
 	HttpCode,
-	HttpException,
 	HttpStatus,
 	Param,
+	Patch,
 	Post,
 	Res,
 	UseFilters,
 	UseGuards,
+	UseInterceptors,
 	UsePipes
 } from '@nestjs/common'
 
-import { Response } from 'express'
-import { DiscountService } from './discount.service'
-import { DiscountDTO, DiscountValidator } from './dto/discount.dto'
-import { I18nService } from '@app/i18n'
+import { ResponseMessage } from '@app/common/decorators/response-message.decorator'
+import { TransformInterceptor } from '@app/common/interceptors/transform-response.interceptor'
+import { ParseObjectIdPipe } from '@app/common/pipes/object-id.pipe'
 import { UserRoles } from 'apps/auth/src/constants/user.constant'
+import { Response } from 'express'
+import mongoose from 'mongoose'
+import { DiscountService } from './discount.service'
+import {
+	DiscountDTO,
+	DiscountValidator,
+	PartialDiscountDTO,
+	UpdateDiscountValidator
+} from './dto/discount.dto'
 
 @Controller('discount')
 export class DiscountController {
-	constructor(
-		private readonly discountService: DiscountService,
-		private readonly localizationService: I18nService
-	) {}
+	constructor(private readonly discountService: DiscountService) {}
+
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	@ResponseMessage('success_messages.ok')
+	@UseInterceptors(TransformInterceptor)
+	@UseFilters(AllExceptionsFilter)
+	public async getAllDiscountCodes(@Res() res) {
+		return this.discountService.getAllDiscountCodes()
+	}
 
 	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	@UseGuards(JwtGuard)
+	@ResponseMessage('success_messages.discount.created')
+	@UseInterceptors(TransformInterceptor)
 	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
+	@UseGuards(JwtGuard)
 	@UsePipes(new ZodValidationPipe(DiscountValidator))
 	@UseFilters(AllExceptionsFilter)
 	public async createDiscountCode(@Body() payload: DiscountDTO, @Res() res: Response) {
-		const { data, error } = await this.discountService.createDiscountCode(payload)
-		if (error) throw new HttpException(error, error.errorCode)
-		const responseBody = new ResponseBody(
-			data,
-			HttpStatus.CREATED,
-			this.localizationService.t('success_messages.discount.created')
-		)
-		return res.json(responseBody)
+		return await this.discountService.createDiscountCode(payload)
+	}
+
+	@Patch(':id')
+	@HttpCode(HttpStatus.CREATED)
+	@ResponseMessage('success_messages.discount.updated')
+	@UseInterceptors(TransformInterceptor)
+	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
+	@UseGuards(JwtGuard)
+	@UsePipes(new ZodValidationPipe(UpdateDiscountValidator))
+	public async updateDiscountCode(
+		@Param('id', new ParseObjectIdPipe()) id: mongoose.Types.ObjectId,
+		@Body() payload: PartialDiscountDTO
+	) {
+		return await this.discountService.updateDiscountCode(id, payload)
+	}
+
+	@Delete(':id')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@ResponseMessage('success_messages.discount.deleted')
+	@UseInterceptors(TransformInterceptor)
+	@UseGuards(JwtGuard)
+	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
+	@UseFilters(AllExceptionsFilter)
+	public async deleteDiscountCode(@Param('id') id: string) {
+		return await this.discountService.deleteDiscountCode(id)
 	}
 
 	@Get('discount-amount/:id')
 	@HttpCode(HttpStatus.OK)
 	@UseFilters(AllExceptionsFilter)
 	public async getDiscountAmount() {}
-
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	@UseGuards(JwtGuard)
-	@UseFilters(AllExceptionsFilter)
-	public async getAllDiscountCodes(@Res() res) {
-		const { data, error } = await this.discountService.getAllDiscountCodes()
-		if (error) throw new HttpException(error, error.errorCode)
-		const responseBody = new ResponseBody(data, HttpStatus.OK, 'Ok')
-		return res.json(responseBody)
-	}
-
-	@Delete(':id')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	@UseGuards(JwtGuard)
-	@Roles(UserRoles.ADMIN, UserRoles.MANAGER)
-	@UseFilters(AllExceptionsFilter)
-	public async deleteDiscountCode(@Param('id') id: string, @Res() res: Response) {
-		const { data, error } = await this.discountService.deleteDiscountCode(id)
-		if (error) throw new HttpException(error, error.errorCode)
-		const responseBody = new ResponseBody(
-			data,
-			HttpStatus.NO_CONTENT,
-			this.localizationService.t('success_messages.discount.deleted')
-		)
-		return res.json(responseBody)
-	}
 }

@@ -1,35 +1,20 @@
+import { Log } from '@app/common'
+import { RmqService } from '@app/rmq'
 import { NestFactory } from '@nestjs/core'
 import { ShoppingCartModule } from './shopping-cart.module'
 import { ConfigService } from '@nestjs/config'
-import { RmqService } from '@app/rmq'
-import { Log } from '@app/common'
-import session from 'express-session'
-import cookieParser from 'cookie-parser'
 
 declare const module: any
 
 async function bootstrap() {
 	const app = await NestFactory.create(ShoppingCartModule)
-	const configService = app.get<ConfigService>(ConfigService)
-	const rmqService = app.get<RmqService>(RmqService)
-	const PORT = 3004 as const
+	const configService = app.get(ConfigService)
 	app.setGlobalPrefix('/v1/api')
-	app.enableCors({
-		credentials: true,
-		origin: [configService.get<string>('LOCAL_ORIGIN')]
-	})
-	app.use(cookieParser())
-	app.use(
-		session({
-			secret: configService.get<string>('SESSION_SECRET'),
-			resave: false,
-			saveUninitialized: false
-		})
-	)
+	// Microservices
+	const rmqService = app.get(RmqService)
 	app.connectMicroservice(rmqService.getOptions('SHOPPING_CART'))
 	await app.startAllMicroservices()
-	console.log(configService.get('RABBIT_MQ_SHOPPING_CART_QUEUE'))
-	await app.listen(PORT, async () => {
+	await app.listen(configService.get('SHOPPING_CART_SERVICE_PORT'), async () => {
 		const url = await app.getUrl()
 		Log.info(`Shopping cart service is running on: ${Log.highlight(url)}`)
 	})

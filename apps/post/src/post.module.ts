@@ -16,8 +16,7 @@ import { Post, PostSchema } from './schemas/post.schema'
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			isGlobal: true,
-			envFilePath: '/apps/post/.env'
+			envFilePath: '.env'
 		}),
 		DatabaseModule,
 		RmqModule,

@@ -7,7 +7,7 @@ import { I18nService } from '@app/i18n'
 @Injectable()
 export class ProductCollectionService {
 	constructor(
-		@Inject(ProductCollectionRepository.provide)
+		@Inject(ProductCollectionRepository.name)
 		private readonly productCollectionRepository: ProductCollectionRepository,
 		private readonly i18nService: I18nService
 	) {}

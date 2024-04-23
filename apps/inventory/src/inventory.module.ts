@@ -16,9 +16,7 @@ import { RetailStoreModule } from 'apps/retail-store/src/retail-store.module'
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			envFilePath: './apps/inventory/.env',
-			isGlobal: true,
-			cache: true
+			envFilePath: '.env'
 		}),
 		AuthModule,
 		ProductModule,
