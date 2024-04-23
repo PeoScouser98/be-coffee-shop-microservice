@@ -1,11 +1,4 @@
-import { ServiceResult } from '@app/common'
-import {
-	BadRequestException,
-	HttpStatus,
-	Inject,
-	Injectable,
-	NotFoundException
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { FilterQuery } from 'mongoose'
 import { RetailStoreRepository } from './retail-store.repository'
 import { RetailStoreDTO } from './dto/retail-store.dto'

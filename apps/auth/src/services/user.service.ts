@@ -1,8 +1,6 @@
-import { ServiceResult } from '@app/common'
 import {
 	BadRequestException,
 	ConflictException,
-	HttpStatus,
 	Inject,
 	Injectable,
 	NotFoundException

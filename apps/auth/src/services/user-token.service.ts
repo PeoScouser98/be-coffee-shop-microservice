@@ -1,11 +1,4 @@
-import { ServiceResult } from '@app/common'
-import {
-	BadRequestException,
-	HttpStatus,
-	Inject,
-	Injectable,
-	NotFoundException
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import mongoose, { isValidObjectId } from 'mongoose'
 import { UserTokenDTO } from '../dto/user-token.dto'
 import { UserTokenRepository } from '../repositories/user-token.repository'

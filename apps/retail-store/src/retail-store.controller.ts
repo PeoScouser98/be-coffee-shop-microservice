@@ -3,7 +3,6 @@ import { ResponseMessage } from '@app/common/decorators/response-message.decorat
 import { Roles } from '@app/common/decorators/roles.decorator'
 import { AllExceptionsFilter } from '@app/common/exceptions/exception.filter'
 import { TransformInterceptor } from '@app/common/interceptors/transform-response.interceptor'
-import { I18nService } from '@app/i18n'
 import {
 	Body,
 	Controller,

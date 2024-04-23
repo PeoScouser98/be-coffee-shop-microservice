@@ -1,5 +1,5 @@
 import { ServiceResult } from '@app/common'
-import { BadRequestException, HttpStatus, Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ProductLineDTO } from '../dto/product-line.dto'
 import { ProductLineRepository } from '../repositories/product-line.repository'
 import { I18nService } from '@app/i18n'

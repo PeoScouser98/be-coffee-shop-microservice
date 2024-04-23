@@ -2,12 +2,10 @@ import { ServiceResult } from '@app/common'
 import {
 	BadRequestException,
 	ConflictException,
-	HttpStatus,
 	Inject,
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import * as _ from 'lodash'
 import mongoose, { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose'
 import { ProductStatus, ProductTypeEnum } from '../constants/product.constant'
 import { ProductDTO } from '../dto/product.dto'

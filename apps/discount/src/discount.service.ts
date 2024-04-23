@@ -1,13 +1,6 @@
-import {
-	ConflictException,
-	HttpStatus,
-	Inject,
-	Injectable,
-	NotFoundException
-} from '@nestjs/common'
+import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { DiscountDTO } from './dto/discount.dto'
 import { DiscountRepository } from './discount.repository'
-import { ServiceResult } from '@app/common'
 import { I18nService } from '@app/i18n'
 import mongoose from 'mongoose'
 
