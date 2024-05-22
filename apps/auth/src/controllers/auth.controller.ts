@@ -119,4 +119,13 @@ export class AuthController {
 		const accessToken = token.replace('Bearer', '').trim()
 		return await this.authService.resetPassword(accessToken, userId, payload.newPassword)
 	}
+
+	@Get('current-user')
+	@UseGuards(JwtGuard)
+	@ResponseMessage('success_messages.ok')
+	@UseInterceptors(TransformInterceptor)
+	@UseFilters(AllExceptionsFilter)
+	async getCurrentUser(@CurrentUser() user) {
+		return user
+	}
 }

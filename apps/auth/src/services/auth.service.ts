@@ -36,11 +36,10 @@ export class AuthService {
 
 	async verifyUser(payload: Pick<IUser, 'email' | 'password'>): Promise<UserDocument> {
 		const user = await this.userRepository.findUserByEmail(payload.email)
+		console.log('user', user)
 		if (!user) throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
-
 		if (!user.authenticate(payload.password))
 			throw new BadRequestException(this.i18nService.t('error_messages.auth.incorrect_password'))
-
 		return user
 	}
 
@@ -48,7 +47,6 @@ export class AuthService {
 		const deletedUserToken = await this.userTokenRepository.deleteByUserId(userId)
 		if (!deletedUserToken)
 			throw new NotFoundException(this.i18nService.t('error_messages.user.not_found'))
-
 		return true
 	}
 

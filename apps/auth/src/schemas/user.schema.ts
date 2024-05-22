@@ -1,4 +1,4 @@
-import { getDefaultSchemaOptions } from '@app/common'
+import { BaseAbstractSchema, getDefaultSchemaOptions } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { UserRoles } from '../constants/user.constant'
@@ -12,9 +12,9 @@ const COLLECTION_NAME = 'users' as const
 
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions()
+	...BaseAbstractSchema.defaultSchemaOptions
 })
-export class User {
+export class User extends BaseAbstractSchema {
 	@Prop({
 		type: String,
 		required: true,

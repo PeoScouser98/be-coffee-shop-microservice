@@ -1,6 +1,4 @@
-chmod +x ./scripts/docker.sh
-
-#!/bin/bash
+#!/usr/bin/bash
 
 # Drop previous containers
 docker-compose --file docker-compose.yml down
@@ -14,5 +12,7 @@ docker volume rm $(docker volume ls -q)
 # Run docker compose
 docker-compose --file docker-compose.yml up --detach --build -V
 
-# Initialize replica set for mongodb
-docker exec -it mongodb-primary ./scripts/rs-init.sh
+# Start mongoDB replica set
+docker exec -it mongodb-primary sh -c 'chmod +x /scripts/rs-init.sh'
+docker exec -it mongodb-primary sh ./scripts/rs-init.sh;
+

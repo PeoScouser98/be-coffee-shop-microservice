@@ -33,7 +33,7 @@ import { S3Module } from '@app/s3'
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({ envFilePath: '.env' }),
+		ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
 		AuthModule,
 		S3Module,
 		RmqModule,

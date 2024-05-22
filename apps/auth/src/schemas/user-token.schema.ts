@@ -6,9 +6,10 @@ import { IUserToken } from '../interfaces/user-token.interface'
 export type UserTokenDocument = HydratedDocument<IUserToken>
 
 const COLLECTION_NAME = 'user_tokens' as const
+
 @Schema({
 	collection: COLLECTION_NAME,
-	...getDefaultSchemaOptions()
+	...BaseAbstractSchema.defaultSchemaOptions
 })
 export class UserToken extends BaseAbstractSchema {
 	@Prop({

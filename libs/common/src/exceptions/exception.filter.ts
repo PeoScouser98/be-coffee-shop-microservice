@@ -16,7 +16,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 		Log.error(exception.message)
 		const responseBody = {
-			message: exception,
+			message: exception.message,
 			statusCode: httpStatus,
 			timestamp: new Date().toISOString(),
 			path: httpAdapter.getRequestUrl(ctx.getRequest())

@@ -31,7 +31,6 @@ import { LocalStrategy } from './strategies/local.strategy'
 		JwtModule.register({ global: true }),
 		MongooseModule.forFeatureAsync([
 			{
-				imports: [ConfigModule],
 				name: User.name,
 				inject: [ConfigService],
 				useFactory: (configService: ConfigService) => {

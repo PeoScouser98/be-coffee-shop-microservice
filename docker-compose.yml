@@ -20,7 +20,7 @@ services:
    #          - action: rebuild
    #            path: package.json
    #    env_file:
-   #       - ./apps/auth/.env
+   #       - .env
    #    depends_on:
    #       - mongodb-primary
    #       - mongodb-secondary
@@ -207,7 +207,7 @@ services:
    # #######################################################################
    rabbitmq:
       container_name: rabbitmq
-      image: rabbitmq:3.13.0-alpine
+      image: rabbitmq:3-management
       ports:
          - 5672:5672
          - 15672:15672
@@ -229,7 +229,7 @@ services:
       image: mongo
       volumes:
          - mongodb_master_data:/data/db
-         - ./scripts:/scripts
+         - ./scripts/rs-init.sh:/scripts/rs-init.sh
       ports:
          - 27001:27017
       links:
